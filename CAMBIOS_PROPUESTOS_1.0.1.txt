@@ -1,0 +1,117 @@
+CHAOS RANKS 1.0.1 — CAMBIOS PROPUESTOS E IMPLEMENTADOS
+Fecha: 12 de octubre de 2026
+Base: Chaos Ranks 1.0.0, Minecraft 1.21.1 / Fabric.
+Estado: actualización preparada para revisión mediante una rama y un pull request.
+
+1. PROTECCIÓN DE ARCHIVOS DAÑADOS
+No se reemplazan los datos ilegibles por mapas vacíos que luego sobrescriban el original.
+Si no hay datos recuperables, se bloquea la edición y se registra el problema.
+Los JSON originales se conservan para reparación.
+
+2. GUARDADO COHERENTE Y ATÓMICO
+Los rangos, las asignaciones, la revisión y el indicador de inicialización se guardan
+juntos en store.json. Se escribe primero un archivo temporal, se fuerza su contenido
+al disco y se sustituye el destino mediante movimiento atómico.
+Si el sistema de archivos no admite ese movimiento, el cambio falla de forma explícita.
+
+3. RESPALDO Y RECUPERACIÓN
+store.json.bak conserva el estado válido anterior. Si el principal está dañado o falta,
+se intenta usar el respaldo. Un principal dañado se conserva en store.corrupt-<uuid>.json.
+Se informa en el registro de que la recuperación puede omitir el último cambio.
+Un formato futuro desconocido bloquea la carga en lugar de retroceder automáticamente.
+
+4. MIGRACIÓN DE LA VERSIÓN 1.0.0
+Se importan ranks.json, players.json y state.json después de validarlos.
+Esos archivos se conservan y dejan de ser la fuente activa después de la migración.
+Los datos nuevos se leen desde store.json. Para volver a 1.0.0 hay que restaurar
+el respaldo del mundo anterior: los archivos antiguos no reflejan cambios nuevos.
+
+5. ERRORES DE GUARDADO VISIBLES
+Un guardado fallido no aplica cambios en memoria ni comunica éxito.
+El editor y los comandos muestran un mensaje de error al administrador.
+Los rangos y las asignaciones se preparan sobre copias antes de confirmar el cambio.
+
+6. VALIDACIÓN DE LOS DATOS CARGADOS
+Se verifican la estructura, el esquema, la revisión, los identificadores y las referencias.
+Se rechazan rangos nulos, identificadores incoherentes, etiquetas vacías sin icono,
+asignaciones a rangos inexistentes y varios rangos predeterminados o de OP.
+Las etiquetas, los colores, los iconos, la prioridad y el separador se normalizan.
+
+7. PAQUETES INVÁLIDOS
+Se rechazan JSON nulos o malformados sin una excepción fuera del bloque de validación.
+Los permisos se siguen comprobando en el servidor y también al abrir el editor.
+
+8. LISTAS GRANDES DE RANGOS
+La lista se divide en fragmentos de hasta 16.000 caracteres antes de codificarla.
+El cliente solo abre el editor cuando recibe todos los fragmentos coherentes.
+Se rechazan secuencias inválidas y respuestas mezcladas; el ensamblador se limpia
+al desconectarse. El tamaño total está limitado a 4 Mi caracteres de JSON.
+Se conservan los límites entre pares Unicode al cortar los fragmentos.
+
+9. EDICIÓN SIMULTÁNEA
+Guardar y borrar envían la revisión que vio el administrador al abrir el editor.
+Si los datos cambiaron, la operación antigua se rechaza y se pide volver a abrir /rank.
+No se convierte silenciosamente una edición de un rango borrado o renombrado en un rango nuevo.
+La revisión también cambia con las asignaciones, para mantener una vista coherente.
+
+10. INTERFAZ ADAPTABLE
+El menú reduce su escala cuando la interfaz es demasiado pequeña para 420 × 236.
+El dibujo, los clics, el arrastre, la liberación del ratón y la rueda comparten coordenadas.
+Las áreas de recorte de la lista y la vista previa también se convierten a la escala aplicada.
+El desplazamiento de la lista se ajusta tras las actualizaciones y los borrados.
+La rueda sobre la lista solo actúa dentro de su área.
+Las etiquetas largas reducen la escala de la vista previa y el ejemplo de chat se recorta al panel.
+El botón Sin icono actualiza inmediatamente su estado visual.
+
+11. IDIOMA Y UNICODE
+Los identificadores, las etiquetas y las claves de pestañas utilizan Locale.ROOT.
+Se traducen el título del editor, la etiqueta de un rango nuevo y los mensajes de error.
+Se actualizan inglés y las siete variantes de español.
+El separador elimina caracteres de control y de formato; su límite no corta pares Unicode.
+
+12. ASIGNACIONES MASIVAS
+/rank give y /rank remove guardan una sola vez por comando, aunque haya varios jugadores.
+El renombrado mantiene las asignaciones y el borrado elimina las referencias correspondientes.
+Las consultas públicas devuelven copias para evitar modificaciones accidentales del estado.
+
+13. PRUEBAS DE REGRESIÓN
+La tarea regressionTest forma parte de check y build, sin añadir bibliotecas de prueba.
+Cubre migración, corrupción, recuperación, errores de escritura, renombrados, borrados,
+asignaciones masivas, revisiones antiguas, validación, idioma, Unicode, paquetes y geometría.
+La comprobación con 1.000 rangos incluye codificación y decodificación de los paquetes reales.
+
+14. PRUEBAS VISUALES
+Se mantiene runSelftest para chat, Tab, etiquetas y las cuatro pestañas.
+Se añade runSelftestSmall para una ventana de 1024 × 768 con escala de interfaz 3,
+incluyendo un clic real en el menú escalado y una comprobación de su resultado.
+Todas las ejecuciones utilizan una copia del mundo de pruebas.
+
+15. DOCUMENTACIÓN Y PUBLICACIÓN
+Se actualizan README y el registro de cambios para 1.0.1.
+Se sustituyen los enlaces PASTE_* por enlaces a las imágenes existentes del repositorio.
+Se incluye LICENSE en el archivo del mod.
+El script de CurseForge valida release/beta/alpha, usa metadatos temporales únicos
+y limpia esos archivos después de la operación o del modo DryRun.
+No se ejecutó ninguna publicación en CurseForge o Modrinth.
+
+16. COMPATIBILIDAD Y ENTREGA
+Se mantiene Minecraft 1.21.1, Fabric y Java 21 como objetivo de compilación.
+El editor utiliza paquetes v2: actualizar servidor y clientes juntos a 1.0.1.
+Se mantiene la prioridad: asignación manual, rango OP y rango predeterminado.
+Se mantiene la limitación documentada de compatibilidad con otros sistemas de equipos.
+La actualización queda en una rama para revisión; main no se modifica directamente.
+
+RESULTADOS DE VERIFICACIÓN
+- Compilación completa: aprobada.
+- Regresión: 82 comprobaciones aprobadas.
+- Traducciones: 8 idiomas, 78 claves, parámetros coincidentes.
+- Sintaxis del script de publicación: aprobada; no se subió ningún archivo.
+- Autoprueba visual normal: aprobada; guardado por red y renombrado confirmados.
+- Autoprueba visual reducida: aprobada a 342 × 256 unidades de interfaz; clic escalado confirmado.
+
+ALCANCE DE LAS PRUEBAS
+Se probó el servidor integrado de Minecraft y el transporte real de la definición editada.
+No se ejecutó un ensayo con dos clientes independientes conectados a un servidor dedicado.
+La protección contra ediciones antiguas sí está cubierta por las pruebas de revisión.
+Las capturas de publicación siguen siendo las imágenes de referencia existentes;
+las nuevas capturas de comprobación quedan en run/screenshots de la copia de trabajo.

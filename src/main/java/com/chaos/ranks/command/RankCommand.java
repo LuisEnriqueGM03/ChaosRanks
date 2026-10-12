@@ -13,6 +13,7 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
+import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 
 import net.minecraft.commands.CommandSourceStack;
@@ -70,9 +71,8 @@ public final class RankCommand {
 	private static int give(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
 		RankDef def = rank(ctx);
 		Collection<ServerPlayer> targets = EntityArgument.getPlayers(ctx, "targets");
-		for (ServerPlayer p : targets) {
-			RankStore.assign(p.getUUID(), def.id);
-		}
+  try { RankStore.assignAll(targets.stream().map(ServerPlayer::getUUID).toList(), def.id); }
+  catch (RankStore.StorageException e) { throw new SimpleCommandExceptionType(Lang.tr("msg.storage_error")).create(); }
 		RankTeams.sync(ctx.getSource().getServer());
 		ctx.getSource().sendSuccess(() -> Lang.tr("msg.given", BadgeRenderer.build(def), targets.size()), true);
 		return targets.size();
@@ -80,9 +80,8 @@ public final class RankCommand {
 
 	private static int remove(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
 		Collection<ServerPlayer> targets = EntityArgument.getPlayers(ctx, "targets");
-		for (ServerPlayer p : targets) {
-			RankStore.assign(p.getUUID(), null);
-		}
+  try { RankStore.assignAll(targets.stream().map(ServerPlayer::getUUID).toList(), null); }
+  catch (RankStore.StorageException e) { throw new SimpleCommandExceptionType(Lang.tr("msg.storage_error")).create(); }
 		RankTeams.sync(ctx.getSource().getServer());
 		ctx.getSource().sendSuccess(() -> Lang.tr("msg.removed", targets.size()), true);
 		return targets.size();
@@ -90,7 +89,8 @@ public final class RankCommand {
 
 	private static int delete(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
 		RankDef def = rank(ctx);
-		RankStore.delete(def.id);
+  try { RankStore.delete(def.id); }
+  catch (RankStore.StorageException e) { throw new SimpleCommandExceptionType(Lang.tr("msg.storage_error")).create(); }
 		RankTeams.sync(ctx.getSource().getServer());
 		ctx.getSource().sendSuccess(() -> Lang.tr("msg.deleted", def.id), true);
 		return 1;

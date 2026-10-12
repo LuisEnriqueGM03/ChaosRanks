@@ -37,7 +37,7 @@
 	"chaosranks.screen.hint.op": "Para OPs: se pone solo con /op y se quita con /deop",
 	"chaosranks.screen.hint.letters": "Letras: A-Z 0-9 ! ? . , - + _ & ' : / # * ( ) < > = $ %",
 	"chaosranks.screen.sample_message": "¡Hola a todos!",
-	"chaosranks.msg.need_client": "Instala Chaos Ranks en tu cliente para abrir el menú de rangos.",
+	"chaosranks.msg.need_client": "Instala Chaos Ranks 1.0.1 o posterior en tu cliente para abrir este menú de rangos.",
 	"chaosranks.msg.empty_badge": "La etiqueta necesita texto o icono.",
 	"chaosranks.msg.unknown_rank": "No existe el rango: %s",
 	"chaosranks.msg.given": "Rango %s dado a %s jugador(es)",
@@ -70,5 +70,11 @@
 	"chaosranks.color.black": "Negro",
 	"chaosranks.color.youtube": "YouTube",
 	"chaosranks.color.twitch": "Twitch",
-	"chaosranks.color.discord": "Discord"
+	"chaosranks.color.discord": "Discord",
+	"chaosranks.screen.title": "Rangos",
+	"chaosranks.screen.new_label": "NUEVO",
+	"chaosranks.msg.invalid_rank": "Los datos del rango no son válidos. No se guardó ningún cambio.",
+	"chaosranks.msg.storage_error": "No se pudieron guardar los rangos. Revisa el registro del servidor y repara los datos antes de reintentar.",
+	"chaosranks.msg.stale_editor": "Los rangos cambiaron mientras editabas. Abre /rank de nuevo para cargar los datos actuales; tus cambios no se guardaron.",
+	"chaosranks.msg.too_many_ranks": "La lista de rangos supera el límite del editor (4 Mi caracteres)."
 }

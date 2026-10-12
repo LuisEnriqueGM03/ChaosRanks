@@ -37,7 +37,7 @@
 	"chaosranks.screen.hint.op": "For OPs: given by /op, removed by /deop",
 	"chaosranks.screen.hint.letters": "Letters: A-Z 0-9 ! ? . , - + _ & ' : / # * ( ) < > = $ %",
 	"chaosranks.screen.sample_message": "Hello everyone!",
-	"chaosranks.msg.need_client": "Install Chaos Ranks on your client to open the ranks menu.",
+	"chaosranks.msg.need_client": "Install Chaos Ranks 1.0.1 or newer on your client to open this ranks menu.",
 	"chaosranks.msg.empty_badge": "The badge needs text or an icon.",
 	"chaosranks.msg.unknown_rank": "Unknown rank: %s",
 	"chaosranks.msg.given": "Rank %s given to %s player(s)",
@@ -70,5 +70,11 @@
 	"chaosranks.color.black": "Black",
 	"chaosranks.color.youtube": "YouTube",
 	"chaosranks.color.twitch": "Twitch",
-	"chaosranks.color.discord": "Discord"
+	"chaosranks.color.discord": "Discord",
+	"chaosranks.screen.title": "Ranks",
+	"chaosranks.screen.new_label": "NEW",
+	"chaosranks.msg.invalid_rank": "Invalid rank data. Nothing was saved.",
+	"chaosranks.msg.storage_error": "Rank data could not be saved. Check the server log and repair the data before retrying.",
+	"chaosranks.msg.stale_editor": "Ranks changed while you were editing. Reopen /rank to load the latest data; your changes were not saved.",
+	"chaosranks.msg.too_many_ranks": "The rank list exceeds the editor limit (4 Mi characters)."
 }

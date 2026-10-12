@@ -77,7 +77,7 @@ public final class BadgeMeta {
 
 	/** Mayúsculas, sin tildes, solo caracteres que tiene la fuente y como mucho {@link #MAX_LABEL}. */
 	public static String sanitize(String text) {
-		String plain = Normalizer.normalize(text.toUpperCase(), Normalizer.Form.NFD).replaceAll("\\p{M}", "");
+		String plain = Normalizer.normalize(text.toUpperCase(java.util.Locale.ROOT), Normalizer.Form.NFD).replaceAll("\\p{M}", "");
 		StringBuilder sb = new StringBuilder();
 		for (char c : plain.toCharArray()) {
 			if (sb.length() >= MAX_LABEL) {

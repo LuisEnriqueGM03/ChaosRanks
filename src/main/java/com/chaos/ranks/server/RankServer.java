@@ -25,10 +25,12 @@ public final class RankServer {
 		ServerPlayNetworking.registerGlobalReceiver(RankPayloads.Save.TYPE, (payload, context) ->
 				context.server().execute(() -> save(context.player(), payload)));
 		ServerPlayNetworking.registerGlobalReceiver(RankPayloads.Delete.TYPE, (payload, context) ->
-				context.server().execute(() -> delete(context.player(), payload.id())));
+				context.server().execute(() -> delete(context.player(), payload)));
 	}
 
 	public static void open(ServerPlayer player, String selectId) {
+  if (!player.hasPermissions(PERMISSION)) return;
+  if (!RankStore.writable()) { error(player, "msg.storage_error"); return; }
 		if (!ServerPlayNetworking.canSend(player, RankPayloads.OpenManager.TYPE)) {
 			player.sendSystemMessage(Lang.tr("msg.need_client")
 					.withStyle(ChatFormatting.RED));
@@ -36,40 +38,53 @@ public final class RankServer {
 		}
 		List<RankDef> ranks = new ArrayList<>(RankStore.ranks());
 		ranks.sort((a, b) -> Integer.compare(b.priority, a.priority));
-		ServerPlayNetworking.send(player, new RankPayloads.OpenManager(ranks, selectId));
+		try {
+   for (var page : RankPayloads.pages(ranks, selectId, RankStore.revision())) ServerPlayNetworking.send(player, page);
+  } catch (IllegalArgumentException e) { error(player, "msg.too_many_ranks"); }
 	}
 
 	private static void save(ServerPlayer player, RankPayloads.Save payload) {
 		if (!player.hasPermissions(PERMISSION)) {
 			return;
 		}
+		if (!checkRevision(player, payload.revision())) return;
 		RankDef def;
 		try {
 			def = payload.rank();
+   def.sanitize();
 		} catch (Exception e) {
 			ChaosRanks.LOGGER.warn("Rango inválido de {}", player.getScoreboardName(), e);
+   error(player, "msg.invalid_rank");
 			return;
 		}
-		def.sanitize();
-		if (def.label.isEmpty() && def.icon == null) {
+		if (def.label.isBlank() && def.icon == null) {
 			player.sendSystemMessage(Lang.tr("msg.empty_badge").withStyle(ChatFormatting.RED));
 			return;
 		}
 		// El id sigue al texto: si se renombra, los jugadores que lo tenían pasan al id nuevo.
-		String original = !payload.originalId().isEmpty() && RankStore.get(payload.originalId()) != null
-				? payload.originalId()
-				: null;
+		String original = payload.originalId().isEmpty() ? null : payload.originalId();
+  if (original != null && RankStore.get(original) == null) { error(player, "msg.stale_editor"); return; }
 		def.id = RankStore.freeId(def.label.isEmpty() ? def.icon : def.label, original);
-		RankStore.put(original, def);
+		try { RankStore.put(original, def); }
+  catch (RankStore.StorageException e) { ChaosRanks.LOGGER.error("Rank save failed", e); error(player, "msg.storage_error"); return; }
 		RankTeams.sync(player.server);
 		open(player, def.id);
 	}
 
-	private static void delete(ServerPlayer player, String id) {
-		if (!player.hasPermissions(PERMISSION) || RankStore.get(id) == null) {
+ private static void error(ServerPlayer player, String key) { player.sendSystemMessage(Lang.tr(key).withStyle(ChatFormatting.RED)); }
+ private static boolean checkRevision(ServerPlayer player, long expected) {
+  if (!RankStore.writable()) { error(player, "msg.storage_error"); return false; }
+  try { RankStore.requireRevision(expected); return true; }
+  catch (IllegalStateException e) { error(player, "msg.stale_editor"); return false; }
+ }
+
+	private static void delete(ServerPlayer player, RankPayloads.Delete payload) {
+  String id = payload.id();
+		if (!player.hasPermissions(PERMISSION) || !checkRevision(player, payload.revision()) || RankStore.get(id) == null) {
 			return;
 		}
-		RankStore.delete(id);
+		try { RankStore.delete(id); }
+  catch (RankStore.StorageException e) { ChaosRanks.LOGGER.error("Rank delete failed", e); error(player, "msg.storage_error"); return; }
 		RankTeams.sync(player.server);
 		open(player, "");
 	}

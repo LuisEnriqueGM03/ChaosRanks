@@ -1,4 +1,4 @@
-# Chaos Ranks
+# Chaos Ranks 1.0.1
 
 Mod de Fabric (Minecraft 1.21.1) que añade etiquetas de rango en pixel art al lado del nombre del jugador. Las etiquetas se ven en el chat, en el Tab y encima de la cabeza.
 
@@ -31,7 +31,13 @@ Desde la pestaña Etiqueta se puede marcar cualquier otro rango como "Por defect
 
 **Idiomas:** inglés y español (todas las variantes `es_*`). El menú y los mensajes salen en el idioma del cliente.
 
-Los datos se guardan en `<mundo>/chaosranks/ranks.json` y `players.json`.
+Los rangos y las asignaciones se guardan juntos en `<mundo>/chaosranks/store.json`, con respaldo automático en `store.json.bak`. La actualización migra `ranks.json`, `players.json` y `state.json` de 1.0.0 y conserva esos archivos originales; después de migrar, se utiliza únicamente `store.json`.
+
+Guarda una copia del mundo antes de actualizar. Actualiza el servidor y los clientes a 1.0.1 para utilizar el nuevo protocolo del editor. Los archivos originales de 1.0.0 no reciben los cambios nuevos: volver a esa versión requiere restaurar el respaldo del mundo anterior.
+
+Si el archivo principal está dañado, se intenta recuperar el último respaldo válido y se conserva el principal como `store.corrupt-<uuid>.json`. El respaldo puede contener el estado anterior al último cambio. Si no hay datos recuperables, la edición queda bloqueada y el registro del servidor indica el problema; repara los archivos y reinicia. Los errores de guardado se muestran al administrador y no aplican el cambio en memoria.
+
+El menú se adapta al tamaño de la interfaz. Las listas grandes se transmiten en fragmentos, con un límite total de 4 Mi caracteres de JSON. Si los rangos cambian mientras otro administrador edita, se rechaza la edición antigua; vuelve a abrir `/rank` para cargar el estado actual.
 
 ## Cómo funciona
 
@@ -49,5 +55,7 @@ Ojo: si otro mod o plugin mete a los mismos jugadores en otros equipos, chocará
 
 - `python tools/gen_font.py` regenera las texturas de la fuente y `badge_meta.json` a partir del ASCII art del script. Ahí se añaden letras o iconos.
 - `python tools/gen_gui.py` regenera las texturas del menú (marrón con contorno dorado).
-- `./gradlew build` genera el jar en `build/libs/`.
+- `./gradlew build` ejecuta también las pruebas de regresión y genera el jar en `build/libs/`.
+- `./gradlew regressionTest` verifica persistencia, migración, recuperación, validación, renombrado, edición obsoleta, paquetes grandes y geometría del menú.
+- `./gradlew runSelftestSmall` comprueba el menú en una ventana de 1024 × 768 con escala de interfaz 3, incluyendo un clic real en coordenadas escaladas.
 - `./gradlew runSelftest` crea rangos de ejemplo y guarda capturas en `run/screenshots/selftest_*.png`. Necesita el mundo `run/saves/selftest`.

@@ -1,5 +1,7 @@
 package com.chaos.ranks.client;
 
+import com.chaos.ranks.ChaosRanks;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import com.chaos.ranks.net.RankPayloads;
 
 import net.fabricmc.api.ClientModInitializer;
@@ -9,14 +11,17 @@ public class ChaosRanksClient implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient() {
-		ClientPlayNetworking.registerGlobalReceiver(RankPayloads.OpenManager.TYPE, (payload, context) ->
-				context.client().execute(() -> {
-					if (context.client().screen instanceof RankManagerScreen screen) {
-						screen.update(payload.ranks(), payload.selectId());
-					} else {
-						context.client().setScreen(new RankManagerScreen(payload.ranks(), payload.selectId()));
-					}
-				}));
+		RankPayloads.Assembler assembler = new RankPayloads.Assembler();
+  ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> assembler.clear());
+  ClientPlayNetworking.registerGlobalReceiver(RankPayloads.OpenManager.TYPE, (payload, context) ->
+   context.client().execute(() -> {
+    try {
+     var ranks = assembler.accept(payload);
+     if (ranks == null) return;
+     if (context.client().screen instanceof RankManagerScreen screen) screen.update(ranks, payload.selectId(), payload.revision());
+     else context.client().setScreen(new RankManagerScreen(ranks, payload.selectId(), payload.revision()));
+    } catch (Exception e) { assembler.clear(); ChaosRanks.LOGGER.warn("Invalid rank manager response", e); }
+   }));
 
 		if (SelfTest.enabled()) {
 			SelfTest.register();

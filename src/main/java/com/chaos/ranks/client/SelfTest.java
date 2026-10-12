@@ -94,7 +94,7 @@ public final class SelfTest {
 				d.messageColor = 0xFFE14D;
 				d.nameRgb = 0xFF6FB5;
 				d.nameBold = true;
-				ClientPlayNetworking.send(new RankPayloads.Save(d, "owner"));
+				ClientPlayNetworking.send(new RankPayloads.Save(d, "owner", RankStore.revision()));
 			}
 			case 100 -> mc.setScreen(null); // el servidor responde al guardado abriendo el menú
 			case 103 -> {
@@ -104,6 +104,21 @@ public final class SelfTest {
 			}
 			case 110 -> shot(mc, "chat");
 			case 115 -> server.execute(() -> RankServer.open(player(server), "jefe"));
+   case 117 -> {
+    if (Boolean.getBoolean("chaosranks.selftest.small")) { mc.options.guiScale().set(3); mc.resizeDisplay(); }
+   }
+   case 125 -> {
+    if (Boolean.getBoolean("chaosranks.selftest.small") && mc.screen instanceof RankManagerScreen screen) {
+     double scale = MenuGeometry.scale(screen.width, screen.height);
+     String off = com.chaos.ranks.Lang.tr("button.bold", com.chaos.ranks.Lang.yesNo(false)).getString();
+     var button = screen.children().stream().filter(child -> child instanceof net.minecraft.client.gui.components.Button b && b.getMessage().getString().equals(off)).findFirst().orElseThrow();
+     var widget = (net.minecraft.client.gui.components.Button) button;
+     if (!screen.mouseClicked((widget.getX() + widget.getWidth() / 2.0) * scale, (widget.getY() + widget.getHeight() / 2.0) * scale, 0)) throw new AssertionError("Scaled click was not handled");
+     String on = com.chaos.ranks.Lang.tr("button.bold", com.chaos.ranks.Lang.yesNo(true)).getString();
+     if (screen.children().stream().noneMatch(child -> child instanceof net.minecraft.client.gui.components.Button b && b.getMessage().getString().equals(on))) throw new AssertionError("Scaled click did not toggle bold");
+     ChaosRanks.LOGGER.info("[selftest] scaled input PASS at {}x{}, scale={}", screen.width, screen.height, scale);
+    }
+   }
 			case 130 -> shot(mc, "menu_label");
 			case 132 -> tab(mc, 1);
 			case 140 -> shot(mc, "menu_icon");
@@ -203,7 +218,7 @@ public final class SelfTest {
 	}
 
 	private static void shot(Minecraft mc, String name) {
-		Screenshot.grab(mc.gameDirectory, "selftest_" + name + ".png", mc.getMainRenderTarget(),
+		Screenshot.grab(mc.gameDirectory, "selftest_" + (Boolean.getBoolean("chaosranks.selftest.small") ? "small_" : "") + name + ".png", mc.getMainRenderTarget(),
 				msg -> ChaosRanks.LOGGER.info("[selftest] {}", msg.getString()));
 	}
 }
