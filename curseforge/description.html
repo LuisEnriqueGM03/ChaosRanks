@@ -2,7 +2,7 @@
 <p><strong>Chaos Ranks</strong> adds custom <strong>pixel-art rank badges</strong> next to player names: in <strong>chat</strong>, in the <strong>tab list</strong> and <strong>above their heads</strong>. Design every badge in-game from a custom menu with a <strong>live preview</strong>: no config files, no resource packs to send around, no restarts.</p>
 <p>OWNER, ADMIN, VIP+, YOUTUBE, BUILDER… whatever ranks your server needs, with your own colors, frames and icons. Built for <strong>Fabric 1.21.1</strong>.</p>
 
-<p align="center"><img src="PASTE_CHAT_URL_HERE" alt="Rank badges in chat" width="850"></p>
+<p align="center"><img src="https://raw.githubusercontent.com/LuisEnriqueGM03/ChaosRanks/main/curseforge/chat.png" alt="Rank badges in chat" width="850"></p>
 
 <hr />
 
@@ -16,8 +16,8 @@
 <li>Badges are crisp pixel art at any GUI scale, with a subtle 3D shading and drop shadow.</li>
 </ul>
 
-<p align="center"><img src="PASTE_TAB_URL_HERE" alt="Rank badge in the tab list" width="600"></p>
-<p align="center"><img src="PASTE_NAMETAG_URL_HERE" alt="Rank badge above a player's head" width="600"></p>
+<p align="center"><img src="https://raw.githubusercontent.com/LuisEnriqueGM03/ChaosRanks/main/curseforge/tab.png" alt="Rank badge in the tab list" width="600"></p>
+<p align="center"><img src="https://raw.githubusercontent.com/LuisEnriqueGM03/ChaosRanks/main/curseforge/nametag.png" alt="Rank badge above a player's head" width="600"></p>
 
 <h3>🎨 A real in-game editor</h3>
 <p>Type <code>/rank</code> and a custom menu opens (not a chest!). On the left is the list of ranks, at the top a big live preview of the badge and how it looks in chat, and below it four tabs:</p>
@@ -28,18 +28,18 @@
 <li><strong>Chat</strong>: the player's name color (any RGB color, not just the 16 vanilla ones), bold name, message color, and a custom separator (<code>»</code>, <code>-&gt;</code>, <code>|</code>…) with its own color.</li>
 </ul>
 
-<p align="center"><img src="PASTE_MENU_LABEL_URL_HERE" alt="Rank editor - Badge tab" width="850"></p>
-<p align="center"><img src="PASTE_MENU_ICON_URL_HERE" alt="Rank editor - Icon tab" width="850"></p>
+<p align="center"><img src="https://raw.githubusercontent.com/LuisEnriqueGM03/ChaosRanks/main/curseforge/menu_label.png" alt="Rank editor - Badge tab" width="850"></p>
+<p align="center"><img src="https://raw.githubusercontent.com/LuisEnriqueGM03/ChaosRanks/main/curseforge/menu_icon.png" alt="Rank editor - Icon tab" width="850"></p>
 
 <h3>🖼️ 144 pixel icons</h3>
 <p>Crowns, swords, shields, hammers, gems, diamonds, emeralds, creepers, TNT, dragons, hearts, stars, skulls, wizards, ninjas, robots… plus social icons for <strong>YouTube, Twitch, Discord, TikTok, Instagram, Twitter/X, Kick, Spotify, GitHub and Reddit</strong>. They're all drawn for the badge size, so they stay sharp.</p>
 
-<p align="center"><img src="PASTE_MENU_COLORS_URL_HERE" alt="Rank editor - Colors tab" width="850"></p>
+<p align="center"><img src="https://raw.githubusercontent.com/LuisEnriqueGM03/ChaosRanks/main/curseforge/menu_colors.png" alt="Rank editor - Colors tab" width="850"></p>
 
 <h3>💬 Chat format per rank</h3>
 <p>Every rank has its own chat style. Make your owners shine with a <strong>bold gold name</strong> and yellow text, and keep regular players clean and simple. Colors you choose for the name also apply to the <strong>tab list</strong> and the <strong>nametag</strong>.</p>
 
-<p align="center"><img src="PASTE_MENU_CHAT_URL_HERE" alt="Rank editor - Chat tab" width="850"></p>
+<p align="center"><img src="https://raw.githubusercontent.com/LuisEnriqueGM03/ChaosRanks/main/curseforge/menu_chat.png" alt="Rank editor - Chat tab" width="850"></p>
 
 <h3>⚙️ Works out of the box</h3>
 <ul>
@@ -47,7 +47,7 @@
 <li><strong>Automatic OP rank</strong>: <code>/op player</code> gives them the OP badge instantly, and <code>/deop</code> puts them back to their previous rank.</li>
 <li>Any rank can be marked as <em>default</em> or <em>for OPs</em> from the editor.</li>
 <li>Rename a rank and everybody who had it follows the change automatically.</li>
-<li>Ranks are saved per world in simple JSON files (<code>&lt;world&gt;/chaosranks/</code>).</li>
+<li>Ranks and assignments are saved together in <code>&lt;world&gt;/chaosranks/store.json</code>, with an automatic backup. Version 1.0.0 files are migrated and preserved.</li>
 <li><strong>English and Spanish</strong> translations.</li>
 </ul>
 
@@ -73,7 +73,7 @@
 <h2>📦 Installation</h2>
 <ul>
 <li>Requires <strong>Fabric Loader</strong> and <strong>Fabric API</strong> for Minecraft <strong>1.21.1</strong>.</li>
-<li>Install it on the <strong>server and on every client</strong>. The client provides the pixel font, the editor menu and the chat spacing.</li>
+<li>Install version <strong>1.0.1 on the server and on every client</strong> for the updated editor protocol. The client provides the pixel font, the editor menu and the chat spacing.</li>
 <li>Works in singleplayer too.</li>
 </ul>
 

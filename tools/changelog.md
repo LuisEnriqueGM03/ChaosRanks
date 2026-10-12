@@ -1,3 +1,18 @@
+## Chaos Ranks 1.0.1
+
+- Save ranks and assignments together in an atomic snapshot with a recoverable backup.
+- Migrate and preserve version 1.0.0 files; damaged data disables edits instead of being overwritten.
+- Validate loaded ranks and reject null or malformed save messages.
+- Report persistence errors and commit in-memory changes only after saving succeeds.
+- Reject stale editor changes to prevent conflicting administrator edits.
+- Split large editor lists into bounded network messages; update server and clients together.
+- Fit the editor to smaller viewports and clamp list scrolling after updates.
+- Use locale-independent IDs and translations, translated editor titles and new-rank labels.
+- Strip control characters from chat separators and preserve Unicode boundaries.
+- Save bulk player assignments once per command.
+- Add executable regression tests to the build, include the license in the jar, and fix screenshot links.
+- Validate upload release types and use unique temporary metadata files with cleanup.
+
 ## Chaos Ranks 1.0.0
 
 First release.

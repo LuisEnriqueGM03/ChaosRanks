@@ -35,7 +35,7 @@ public class RankManagerScreen extends Screen {
 		LABEL, ICON, COLORS, CHAT;
 
 		Component title() {
-			return Lang.tr("tab." + name().toLowerCase());
+			return Lang.tr("tab." + name().toLowerCase(java.util.Locale.ROOT));
 		}
 	}
 
@@ -43,7 +43,7 @@ public class RankManagerScreen extends Screen {
 		BACKGROUND, TEXT, ICON, FRAME, NAME, MESSAGE, SEPARATOR;
 
 		Component title() {
-			return Lang.tr("target." + name().toLowerCase());
+			return Lang.tr("target." + name().toLowerCase(java.util.Locale.ROOT));
 		}
 	}
 
@@ -84,6 +84,8 @@ public class RankManagerScreen extends Screen {
 	private static final int FIELD_TEXT = 0xFFEBC0;
 
 	private List<RankDef> ranks;
+ private long revision;
+ private double uiScale = 1;
 	@Nullable private String originalId;
 	private RankDef draft;
 	private Tab tab = Tab.LABEL;
@@ -97,15 +99,18 @@ public class RankManagerScreen extends Screen {
 	/** Recuadros hundidos de los campos de texto de la pestaña actual (x, y, ancho, alto). */
 	private final List<int[]> fields = new ArrayList<>();
 
-	public RankManagerScreen(List<RankDef> ranks, String selectId) {
-		super(Component.literal("Rangos"));
+	public RankManagerScreen(List<RankDef> ranks, String selectId, long revision) {
+		super(Lang.tr("screen.title"));
+  this.revision = revision;
 		this.ranks = ranks;
 		select(selectId);
 	}
 
 	/** Respuesta del servidor tras guardar o borrar: lista nueva, mismo menú. */
-	public void update(List<RankDef> ranks, String selectId) {
+	public void update(List<RankDef> ranks, String selectId, long revision) {
 		this.ranks = ranks;
+  this.revision = revision;
+  listScroll = Math.min(listScroll, maxListScroll());
 		select(selectId.isEmpty() && originalId != null ? originalId : selectId);
 		rebuildWidgets();
 	}
@@ -129,7 +134,7 @@ public class RankManagerScreen extends Screen {
 
 	private void newDraft() {
 		RankDef def = new RankDef();
-		def.label = "NUEVO";
+		def.label = Lang.tr("screen.new_label").getString();
 		def.icon = "star";
 		def.frameColor = 0x1E1E1E;
 		draft = def;
@@ -138,11 +143,11 @@ public class RankManagerScreen extends Screen {
 	}
 
 	private int left() {
-		return (width - W) / 2;
+		return (int) ((width / uiScale - W) / 2);
 	}
 
 	private int top() {
-		return (height - H) / 2;
+		return (int) ((height / uiScale - H) / 2);
 	}
 
 	// ---------------------------------------------------------------------------------------------
@@ -166,6 +171,7 @@ public class RankManagerScreen extends Screen {
 
 	@Override
 	protected void init() {
+  uiScale = MenuGeometry.scale(width, height);
 		int x = left();
 		int y = top();
 		hexBox = null;
@@ -184,10 +190,10 @@ public class RankManagerScreen extends Screen {
 		}
 
 		button(x + RX, y + BOTTOM_Y, 90, 20, Lang.tr("button.save"), () ->
-				ClientPlayNetworking.send(new RankPayloads.Save(draft, originalId == null ? "" : originalId)));
+				ClientPlayNetworking.send(new RankPayloads.Save(draft, originalId == null ? "" : originalId, revision)));
 		GoldButton delete = button(x + RX + 95, y + BOTTOM_Y, 90, 20, Lang.tr(confirmDelete ? "button.confirm_delete" : "button.delete"), () -> {
 			if (confirmDelete && originalId != null) {
-				ClientPlayNetworking.send(new RankPayloads.Delete(originalId));
+				ClientPlayNetworking.send(new RankPayloads.Delete(originalId, revision));
 			} else {
 				confirmDelete = true;
 				rebuildWidgets();
@@ -238,7 +244,7 @@ public class RankManagerScreen extends Screen {
 	}
 
 	private void initIconTab(int x, int y) {
-		button(x, y, 70, 16, Lang.tr("button.no_icon"), () -> draft.icon = null).selected(draft.icon == null);
+		button(x, y, 70, 16, Lang.tr("button.no_icon"), () -> { draft.icon = null; rebuildWidgets(); }).selected(draft.icon == null);
 	}
 
 	private void initColorsTab(int x, int y) {
@@ -331,6 +337,7 @@ public class RankManagerScreen extends Screen {
 
 	@Override
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
+  mouseX /= uiScale; mouseY /= uiScale;
 		if (super.mouseClicked(mouseX, mouseY, button)) {
 			return true;
 		}
@@ -373,9 +380,10 @@ public class RankManagerScreen extends Screen {
 
 	@Override
 	public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+  mouseX /= uiScale; mouseY /= uiScale;
 		int mx = (int) mouseX - left();
-		if (mx < RX) {
-			int max = Math.max(0, ranks.size() * ROW_H - (LIST_BOTTOM - TOP - 4));
+		if (mx >= PAD && mx < PAD + LIST_W && mouseY - top() >= TOP && mouseY - top() < LIST_BOTTOM) {
+			int max = maxListScroll();
 			listScroll = Math.max(0, Math.min(max, listScroll - (int) (scrollY * ROW_H)));
 			return true;
 		}
@@ -385,6 +393,11 @@ public class RankManagerScreen extends Screen {
 		}
 		return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
 	}
+
+ private int maxListScroll() { return Math.max(0, ranks.size() * ROW_H - (LIST_BOTTOM - TOP - 4)); }
+ @Override public void mouseMoved(double x, double y) { super.mouseMoved(x / uiScale, y / uiScale); }
+ @Override public boolean mouseReleased(double x, double y, int button) { return super.mouseReleased(x / uiScale, y / uiScale, button); }
+ @Override public boolean mouseDragged(double x, double y, int button, double dx, double dy) { return super.mouseDragged(x / uiScale, y / uiScale, button, dx / uiScale, dy / uiScale); }
 
 	private int maxIconScroll() {
 		int rows = (BadgeMeta.icons().size() + ICON_COLS - 1) / ICON_COLS;
@@ -423,7 +436,7 @@ public class RankManagerScreen extends Screen {
 
 	@Override
 	public void renderBackground(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
-		super.renderBackground(g, mouseX, mouseY, partialTick);
+
 		int x = left();
 		int y = top();
 		g.blitSprite(PANEL, x, y, W, H);
@@ -438,6 +451,10 @@ public class RankManagerScreen extends Screen {
 
 	@Override
 	public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+  super.renderBackground(g, mouseX, mouseY, partialTick);
+  g.pose().pushPose();
+  g.pose().scale((float) uiScale, (float) uiScale, 1);
+  mouseX = (int) (mouseX / uiScale); mouseY = (int) (mouseY / uiScale);
 		super.render(g, mouseX, mouseY, partialTick);
 		int x = left();
 		int y = top();
@@ -461,6 +478,7 @@ public class RankManagerScreen extends Screen {
 				renderSwatches(g, x, y, get(chatTarget), mx, my, mouseX, mouseY);
 			}
 		}
+  g.pose().popPose();
 	}
 
 	private void renderTitle(GuiGraphics g, int x, int y) {
@@ -476,10 +494,16 @@ public class RankManagerScreen extends Screen {
 		g.drawString(font, editing, x + W - PAD - 2 - font.width(editing), y + 10, LABEL, false);
 	}
 
+ // GuiGraphics scissor coordinates do not follow the pose transform.
+ private void scissor(GuiGraphics g, int left, int top, int right, int bottom) {
+  g.enableScissor(MenuGeometry.scissorStart(left, uiScale), MenuGeometry.scissorStart(top, uiScale),
+   MenuGeometry.scissorEnd(right, uiScale), MenuGeometry.scissorEnd(bottom, uiScale));
+ }
+
 	private void renderList(GuiGraphics g, int x, int y, int mx, int my) {
 		int top = y + TOP + 2;
 		int bottom = y + LIST_BOTTOM - 2;
-		g.enableScissor(x + PAD + 2, top, x + PAD + LIST_W - 2, bottom);
+		scissor(g, x + PAD + 2, top, x + PAD + LIST_W - 2, bottom);
 		for (int i = 0; i < ranks.size(); i++) {
 			RankDef def = ranks.get(i);
 			int ry = top + i * ROW_H - listScroll;
@@ -503,8 +527,9 @@ public class RankManagerScreen extends Screen {
 		MutableComponent badge = BadgeRenderer.build(draft);
 		int bw = font.width(badge);
 		g.pose().pushPose();
-		g.pose().translate(x + RX + RW / 2f - bw, y + TOP + 10, 0);
-		g.pose().scale(2, 2, 1);
+		float previewScale = Math.min(2f, (RW - 16f) / Math.max(1, bw));
+  g.pose().translate(x + RX + (RW - bw * previewScale) / 2f, y + TOP + 10, 0);
+  g.pose().scale(previewScale, previewScale, 1);
 		g.drawString(font, badge, 0, 0, 0xFFFFFF, true);
 		g.pose().popPose();
 
@@ -514,7 +539,9 @@ public class RankManagerScreen extends Screen {
 				.append(" ")
 				.append(RankChat.format(draft.separator, draft.separatorColor, draft.messageColor,
 						Lang.tr("screen.sample_message")));
+  scissor(g, x + RX + 4, y + TOP + 2, x + RX + RW - 4, y + PREVIEW_BOTTOM - 2);
 		g.drawString(font, chat, x + RX + 8, y + PREVIEW_BOTTOM - 14, 0xFFFFFF, true);
+  g.disableScissor();
 	}
 
 	private void renderLabelTab(GuiGraphics g, int x, int y) {

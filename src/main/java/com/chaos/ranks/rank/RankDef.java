@@ -63,7 +63,7 @@ public class RankDef {
 
 	/** Deja los valores dentro de lo permitido (lo que llega del cliente no es de fiar). */
 	public void sanitize() {
-		label = BadgeMeta.sanitize(label == null ? "" : label);
+		label = BadgeMeta.sanitize(label == null ? "" : label).strip();
 		if (BadgeMeta.icon(icon) == null) {
 			icon = null;
 		}
@@ -75,9 +75,11 @@ public class RankDef {
 		}
 		priority = Math.max(0, Math.min(MAX_PRIORITY, priority));
 		nameRgb &= 0xFFFFFF;
-		separator = separator == null ? "" : separator.replace("§", "").strip();
+		separator = separator == null ? "" : separator.replace("§", "").replaceAll("[\\p{Cc}\\p{Cf}]", "").strip();
 		if (separator.length() > MAX_SEPARATOR) {
-			separator = separator.substring(0, MAX_SEPARATOR);
+			int end = MAX_SEPARATOR;
+   if (Character.isHighSurrogate(separator.charAt(end - 1))) end--;
+   separator = separator.substring(0, end);
 		}
 		separatorColor &= 0xFFFFFF;
 		messageColor &= 0xFFFFFF;

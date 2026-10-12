@@ -3,6 +3,7 @@
 # Uso:  powershell -File tools/upload-curseforge.ps1 [-DryRun]
 param(
 	[string]$ProjectId = "1729326",
+	[ValidateSet("release", "beta", "alpha")]
 	[string]$ReleaseType = "release",
 	[switch]$DryRun
 )
@@ -37,14 +38,15 @@ $metadata = @{
 	releaseType   = $ReleaseType
 	relations     = @{ projects = @(@{ slug = "fabric-api"; type = "requiredDependency" }) }
 } | ConvertTo-Json -Depth 5
-$metaFile = Join-Path $env:TEMP "chaosranks-cf-metadata.json"
+$metaFile = Join-Path $env:TEMP ("chaosranks-cf-" + [guid]::NewGuid().ToString() + ".json")
 [IO.File]::WriteAllText($metaFile, $metadata, (New-Object Text.UTF8Encoding $false))
 
 Write-Host "Proyecto $ProjectId | $($jar.Name) | Chaos - Ranks $version | $ReleaseType"
-if ($DryRun) { Write-Host "DryRun: no se sube nada."; Get-Content $metaFile; exit 0 }
+if ($DryRun) { Write-Host "DryRun: no se sube nada."; Get-Content $metaFile; Remove-Item -LiteralPath $metaFile; exit 0 }
 
+try {
 $response = (& curl.exe -s -w "`nHTTP %{http_code}" -H "X-Api-Token: $token" `
 	-F "metadata=<$metaFile" -F "file=@$($jar.FullName)" "$api/projects/$ProjectId/upload-file") -join "`n"
-Remove-Item $metaFile
+} finally { Remove-Item -LiteralPath $metaFile -ErrorAction SilentlyContinue }
 Write-Host $response
 if ($response -notmatch "HTTP 200") { exit 1 }
