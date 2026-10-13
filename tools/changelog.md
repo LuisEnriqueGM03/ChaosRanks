@@ -1,5 +1,6 @@
 ## Chaos Ranks 1.0.1 — Forge and NeoForge ports
 
+- Mod author: **Goddark83**.
 - Minecraft 1.21.1 ports for NeoForge 21.1.257 and Forge 52.1.16, with Java 21.
 - Shared rank, storage, badge, UI and regression code in `common`; native loader integrations in separate modules.
 - Native command, lifecycle, player join, chat and client tick events for each loader.
