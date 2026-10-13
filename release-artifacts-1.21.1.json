@@ -1,0 +1,18 @@
+[
+  {
+    "loader": "neoforge",
+    "minecraft": "1.21.1",
+    "version": "1.0.1",
+    "file": "chaosranks-neoforge-1.21.1-1.0.1.jar",
+    "sha256": "c0b5598092fe76207745588523e365da3e7271fb791a89bec8ed2edeb854a7c9",
+    "branch": "neoforge-1.21.1"
+  },
+  {
+    "loader": "forge",
+    "minecraft": "1.21.1",
+    "version": "1.0.1",
+    "file": "chaosranks-forge-1.21.1-1.0.1.jar",
+    "sha256": "ac47cbaab38a443f12bb18e51e92f3d0f0f4765667e4f9ef97058f453b0043fd",
+    "branch": "forge-1.21.1"
+  }
+]

@@ -1,0 +1,18 @@
+{
+  "required": true,
+  "package": "com.chaos.ranks.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "PlayerListMixin",
+    "PlayerTeamMixin",
+    "ServerGamePacketListenerImplMixin"
+  ],
+  "client": [
+    "client.ChatComponentMixin",
+    "client.PlayerTabOverlayMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "minVersion": "0.8.7"
+}

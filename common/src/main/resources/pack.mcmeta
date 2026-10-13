@@ -1,0 +1,10 @@
+{
+  "pack": {
+    "description": "Chaos Ranks resources and chat type",
+    "pack_format": 34,
+    "supported_formats": [
+      34,
+      48
+    ]
+  }
+}

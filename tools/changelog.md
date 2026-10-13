@@ -1,3 +1,13 @@
+## Chaos Ranks 1.0.1 — Forge and NeoForge ports
+
+- Minecraft 1.21.1 ports for NeoForge 21.1.257 and Forge 52.1.16, with Java 21.
+- Shared rank, storage, badge, UI and regression code in `common`; native loader integrations in separate modules.
+- Native command, lifecycle, player join, chat and client tick events for each loader.
+- Native NeoForge payloads and a versioned Forge channel with explicit packet directions and main-thread handling.
+- Preserve the atomic store, backup recovery, stale-editor protection and adaptive GUI from Fabric 1.0.1.
+- Forge-specific Gradle wrapper to support its development toolchain.
+- Install the matching loader JAR on server and clients; Fabric API is not required for these ports.
+
 ## Chaos Ranks 1.0.1
 
 - Save ranks and assignments together in an atomic snapshot with a recoverable backup.

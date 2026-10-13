@@ -115,3 +115,18 @@ No se ejecutó un ensayo con dos clientes independientes conectados a un servido
 La protección contra ediciones antiguas sí está cubierta por las pruebas de revisión.
 Las capturas de publicación siguen siendo las imágenes de referencia existentes;
 las nuevas capturas de comprobación quedan en run/screenshots de la copia de trabajo.
+
+
+PORTS PARA FORGE Y NEOFORGE — MINECRAFT 1.21.1
+- Se comparte el código de rangos, guardado, red, fuentes, menú y regresiones en common.
+- Cada cargador tiene sus propios puntos de entrada, eventos, transporte y metadatos.
+- NeoForge usa RegisterPayloadHandlersEvent y su protocolo de payloads.
+- Forge usa SimpleChannel con versión 2, direcciones explícitas y gestión en el hilo principal.
+- Se mantienen los permisos de administración, revisiones, recuperación y store.json de 1.0.1.
+- Se añade gradlew-forge para seleccionar la versión de Gradle compatible con ForgeGradle 6.
+- Ramas: neoforge-1.21.1 y forge-1.21.1.
+- Archivos: chaosranks-neoforge-1.21.1-1.0.1.jar y chaosranks-forge-1.21.1-1.0.1.jar.
+- Java 21; NeoForge 21.1.257 o Forge 52.1.16 como mínimos probados.
+- Instalar solamente el JAR del cargador utilizado, tanto en cliente como en servidor.
+- Estos ports no requieren Fabric API.
+- Resultados de las pruebas y sus límites: VALIDATION.md.

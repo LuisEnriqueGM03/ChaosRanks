@@ -5,6 +5,7 @@ param(
 	[string]$ProjectId = "1729326",
 	[ValidateSet("release", "beta", "alpha")]
 	[string]$ReleaseType = "release",
+	[string]$Loader = "",
 	[switch]$DryRun
 )
 $ErrorActionPreference = "Stop"
@@ -15,13 +16,18 @@ if (-not $token) { $token = [Environment]::GetEnvironmentVariable("CURSEFORGE_TO
 if (-not $token) { throw "Falta CURSEFORGE_TOKEN (setx CURSEFORGE_TOKEN <token>)" }
 
 $version = ((Get-Content "$root\gradle.properties") | Where-Object { $_ -match '^version=' }) -replace '^version=', ''
-$jar = Get-ChildItem "$root\build\libs" -Filter "chaosranks-$version.jar" | Select-Object -First 1
-if (-not $jar) { throw "No existe build/libs/chaosranks-$version.jar; ejecuta gradlew build" }
+if (-not $Loader) {
+ $Loader = ((Get-Content "$root\gradle.properties") | Where-Object { $_ -match '^default_loader=' }) -replace '^default_loader=', ''
+}
+if ($Loader -notin @('fabric', 'neoforge', 'forge')) { throw "Loader debe ser fabric, neoforge o forge" }
+$loaderLabel = @{fabric='Fabric'; neoforge='NeoForge'; forge='Forge'}[$Loader]
+$jar = Get-ChildItem "$root\$Loader\build\libs" -Filter "chaosranks-$Loader-1.21.1-$version.jar" | Select-Object -First 1
+if (-not $jar) { throw "No existe el JAR de $Loader para $version; compila el cargador elegido" }
 
 # Ids de CurseForge para versión de juego, cargador, Java y entorno.
 $api = "https://minecraft.curseforge.com/api"
 $all = Invoke-RestMethod -Uri "$api/game/versions" -Headers @{ "X-Api-Token" = $token }
-$wanted = "1.21.1", "Fabric", "Java 21", "Client", "Server"
+$wanted = "1.21.1", $loaderLabel, "Java 21", "Client", "Server"
 $ids = foreach ($name in $wanted) {
 	$match = $all | Where-Object { $_.name -eq $name } | Select-Object -First 1
 	if (-not $match) { throw "CurseForge no tiene la versión '$name'" }
@@ -33,10 +39,10 @@ $metadata = @{
 	# ReadAllText: en PowerShell 5.1, Get-Content -Raw añade propiedades que ConvertTo-Json serializa.
 	changelog     = [IO.File]::ReadAllText("$root\tools\changelog.md", [Text.Encoding]::UTF8)
 	changelogType = "markdown"
-	displayName   = "Chaos - Ranks $version"
+	displayName   = "Chaos Ranks $version - $loaderLabel 1.21.1"
 	gameVersions  = @($ids)
 	releaseType   = $ReleaseType
-	relations     = @{ projects = @(@{ slug = "fabric-api"; type = "requiredDependency" }) }
+	relations     = @{ projects = $(if ($Loader -eq "fabric") { @(@{ slug = "fabric-api"; type = "requiredDependency" }) } else { @() }) }
 } | ConvertTo-Json -Depth 5
 $metaFile = Join-Path $env:TEMP ("chaosranks-cf-" + [guid]::NewGuid().ToString() + ".json")
 [IO.File]::WriteAllText($metaFile, $metadata, (New-Object Text.UTF8Encoding $false))

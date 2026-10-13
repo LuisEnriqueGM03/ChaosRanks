@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "id": "chaosranks",
+  "version": "${version}",
+  "name": "Chaos Ranks",
+  "description": "Etiquetas de rango en pixel art junto al nombre (chat, Tab y encima de la cabeza) y formato de chat por rango. Se diseñan con /rank desde un menú propio con vista previa en vivo.",
+  "authors": [
+    "Luis Enrique Gil Mayser"
+  ],
+  "license": "MIT",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.chaos.ranks.fabric.FabricRanks"
+    ],
+    "client": [
+      "com.chaos.ranks.fabric.FabricClient"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.16.0",
+    "minecraft": "~1.21.1",
+    "java": ">=21",
+    "fabric-api": "*"
+  },
+  "mixins": [
+    "chaosranks.mixins.json"
+  ]
+}

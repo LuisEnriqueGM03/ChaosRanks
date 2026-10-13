@@ -1,13 +1,14 @@
 pluginManagement {
-	repositories {
-		maven {
-			name = 'Fabric'
-			url = 'https://maven.fabricmc.net/'
-		}
-		mavenCentral()
-		gradlePluginPortal()
-	}
+ repositories {
+  maven { url = 'https://maven.fabricmc.net/' }
+  maven { url = 'https://maven.neoforged.net/releases' }
+  maven { url = 'https://maven.minecraftforge.net/' }
+  maven { url = 'https://repo.spongepowered.org/repository/maven-public' }
+  mavenCentral()
+  gradlePluginPortal()
+ }
 }
-
-// Should match your modid
 rootProject.name = 'chaosranks'
+def selected = providers.gradleProperty('loader').orElse(providers.gradleProperty('default_loader').orElse('neoforge')).get()
+if (selected in ['fabric', 'neoforge', 'forge']) include(selected)
+else throw new GradleException('loader debe ser fabric, neoforge o forge (compilar por separado)')

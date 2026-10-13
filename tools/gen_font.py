@@ -4,9 +4,9 @@ Genera la fuente de las etiquetas de rango a partir de ASCII art.
     python tools/gen_font.py
 
 Escribe:
-  src/main/resources/assets/chaosranks/textures/font/*.png
-  src/main/resources/assets/chaosranks/font/badge.json
-  src/main/resources/assets/chaosranks/badge_meta.json   (anchos y codepoints que usa el servidor)
+  common/src/main/resources/assets/chaosranks/textures/font/*.png
+  common/src/main/resources/assets/chaosranks/font/badge.json
+  common/src/main/resources/assets/chaosranks/badge_meta.json   (anchos y codepoints que usa el servidor)
 
 Para añadir un icono: añade una entrada a ICONS (7x7, '#' = blanco, '+' = gris, '.' = vacío) y vuelve a ejecutar.
 Todo es blanco o gris porque el juego tiñe cada glifo con el color del estilo.
@@ -25,7 +25,7 @@ from pathlib import Path
 
 from PIL import Image
 
-ROOT = Path(__file__).resolve().parent.parent / "src/main/resources/assets/chaosranks"
+ROOT = Path(__file__).resolve().parent.parent / "common/src/main/resources/assets/chaosranks"
 TEX = ROOT / "textures/font"
 
 WHITE = (255, 255, 255, 255)

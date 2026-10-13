@@ -1,0 +1,20 @@
+plugins { id 'net.neoforged.moddev' version "${moddev_version}" }
+apply from: rootProject.file('gradle/loader.gradle')
+neoForge {
+ version = neoforge_version
+ runs {
+  client { client(); gameDirectory = file('run-1.21.1') }
+  server { server(); gameDirectory = file('run-1.21.1'); programArgument '--nogui' }
+  serverSmoke { server(); gameDirectory = file('run-server-smoke'); programArgument '--initSettings' }
+  selftest {
+   client(); gameDirectory = file('run-1.21.1')
+   systemProperty 'chaosranks.selftest', 'true'
+  }
+  selftestSmall {
+   client(); gameDirectory = file('run-1.21.1')
+   systemProperty 'chaosranks.selftest', 'true'; systemProperty 'chaosranks.selftest.small', 'true'
+   programArguments.addAll('--width', '1024', '--height', '768')
+  }
+ }
+ mods { chaosranks { sourceSet sourceSets.main } }
+}
