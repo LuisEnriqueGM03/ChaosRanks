@@ -73,7 +73,7 @@ Desde la raíz, con Java 21 para Forge y NeoForge (Loom 1.18 requiere Java 25 pa
 - Menú reducido: reemplaza `runSelftest` por `runSelftestSmall`.
 - En Windows usa los respectivos archivos `.bat`.
 
-ForgeGradle 6 requiere Gradle 8: el lanzador `gradlew-forge` lo selecciona automáticamente. El lanzador principal usa Gradle 9 para NeoForge y Fabric. Cada cargador se compila por separado; `default_loader` selecciona el predeterminado de la rama.
+ForgeGradle 6 requiere Gradle 8: el lanzador `gradlew-forge` lo selecciona automáticamente. En esta rama Forge el lanzador principal también utiliza Gradle 8.12. La rama NeoForge usa Gradle 9.7.1; para Fabric utiliza su rama correspondiente. Cada cargador se compila por separado; `default_loader` selecciona el predeterminado de la rama.
 
 Los JAR quedan en `<cargador>/build/libs/`. Las autopruebas necesitan una copia del mundo `selftest` en `<cargador>/run-1.21.1/saves/`, y modifican ese mundo de prueba.
 
