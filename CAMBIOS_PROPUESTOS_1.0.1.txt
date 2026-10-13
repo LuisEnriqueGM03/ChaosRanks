@@ -115,3 +115,5 @@ No se ejecutó un ensayo con dos clientes independientes conectados a un servido
 La protección contra ediciones antiguas sí está cubierta por las pruebas de revisión.
 Las capturas de publicación siguen siendo las imágenes de referencia existentes;
 las nuevas capturas de comprobación quedan en run/screenshots de la copia de trabajo.
+
+Autor del mod: Goddark83. Actualizado en metadatos, licencia y descripciones de publicación.
