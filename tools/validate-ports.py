@@ -13,7 +13,7 @@ for loader, minimum in (("neoforge", "21.1.257"), ("forge", "52.1.16")):
         descriptor = tomllib.loads(contents.read(descriptor_path).decode())
         mod = descriptor["mods"][0]
         assert mod["modId"] == "chaosranks" and mod["version"] == "1.0.1"
-        assert mod["authors"] == "Luis Enrique Gil Mayser"
+        assert mod["authors"] == "Goddark83"
         dependencies = {item["modId"]: item for item in descriptor["dependencies"]["chaosranks"]}
         assert dependencies["minecraft"]["versionRange"] == "[1.21.1,1.21.2)"
         assert dependencies[loader]["versionRange"].startswith("[" + minimum + ",")

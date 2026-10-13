@@ -76,4 +76,4 @@ Which rank a player shows: **rank given with /rank give** → **OP rank** (if th
 
 ---
 
-Made with ❤️ by **Luis Enrique Gil Mayser**. Feedback and ideas are welcome!
+Made with ❤️ by **Goddark83**. Feedback and ideas are welcome!
