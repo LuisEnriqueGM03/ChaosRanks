@@ -1,6 +1,6 @@
 # Chaos Ranks 1.0.2
 
-Mod para Fabric, NeoForge y Forge (Minecraft 26.1) que aÃ±ade etiquetas de rango en pixel art al lado del nombre del jugador. Las etiquetas se ven en el chat, en el Tab y encima de la cabeza.
+Mod para Fabric, NeoForge y Forge (Minecraft 26.2) que aÃ±ade etiquetas de rango en pixel art al lado del nombre del jugador. Las etiquetas se ven en el chat, en el Tab y encima de la cabeza.
 
 Tiene que estar instalado en el servidor **y** en los clientes: el cliente aporta la fuente con los grÃ¡ficos y la pantalla para escribir el texto.
 
@@ -51,17 +51,17 @@ Las capas no comparten pÃ­xeles para que no parpadeen en el mundo 3D. La etiquet
 
 Ojo: si otro mod o plugin mete a los mismos jugadores en otros equipos, chocarÃ¡n.
 
-## Ports para Minecraft 26.1
+## Ports para Minecraft 26.2
 
 Autor: **Goddark83**. Java 25 en cliente, servidor y desarrollo.
 
-- Fabric: Loader 0.19.5 y Fabric API 0.145.1 para 26.1. Rama `fabric-26.1`.
-- Forge: 62.0.9 para 26.1. Rama `forge-26.1`.
-- NeoForge: 26.1.0.19-beta para 26.1. Rama `neoforge-26.1`.
+- Fabric: Loader 0.19.5 y Fabric API 0.161.0 para 26.2. Rama `fabric-26.2`.
+- Forge: 65.1.3 para 26.2. Rama `forge-26.2`.
+- NeoForge: 26.2.0.90 para 26.2. Rama `neoforge-26.2`.
 
 Instala el JAR correspondiente en servidor y clientes. Forge y NeoForge no requieren Fabric API. Los rangos mantienen el formato `store.json` de Chaos Ranks 1.0.1.
 
-Se adaptaron el dibujo del menú al sistema de extracción, colores ARGB, fuentes FontDescription, eventos de ratón con modificadores, permisos de administración y los eventos nativos de los cargadores. Los recursos usan el formato 84 de Minecraft 26.1.
+Se adaptaron el dibujo del menú al sistema de extracción, colores ARGB, fuentes FontDescription, eventos de ratón con modificadores, permisos de administración y los eventos nativos de los cargadores. Los recursos usan el formato 88 de Minecraft 26.2.
 
 ### Desarrollo
 
@@ -71,6 +71,6 @@ Los JAR están en `<cargador>/build/libs`. Las autopruebas `:fabric:runSelftestSm
 
 El resultado y los límites de las pruebas se documentan en VALIDATION.md.
 
-## Corrección del chat en 26.1
+## Corrección del chat en 26.2
 
 La versión 1.0.2 usa filas de 14 píxeles para etiquetas de 11, con 3 píxeles de separación. El dibujo, fondos, desplazamiento y captura de clics comparten la misma altura, respetando el ajuste de espaciado de Minecraft.

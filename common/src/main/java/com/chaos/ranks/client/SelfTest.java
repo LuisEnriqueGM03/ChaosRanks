@@ -47,12 +47,12 @@ public final class SelfTest {
 
 
 	public static void tick(Minecraft mc) {
-  if (mc.screen instanceof net.minecraft.client.gui.screens.AccessibilityOnboardingScreen) mc.setScreen(new net.minecraft.client.gui.screens.TitleScreen());
+  if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.AccessibilityOnboardingScreen) mc.gui.setScreen(new net.minecraft.client.gui.screens.TitleScreen());
   // Open the isolated test world after loader initialization, through the normal title-screen flow.
-  if (!openingWorld && mc.getSingleplayerServer() == null && mc.screen instanceof net.minecraft.client.gui.screens.TitleScreen) {
+  if (!openingWorld && mc.getSingleplayerServer() == null && mc.gui.screen() instanceof net.minecraft.client.gui.screens.TitleScreen) {
    openingWorld = true;
    if (java.nio.file.Files.exists(mc.gameDirectory.toPath().resolve("saves/selftest/level.dat"))) {
-    mc.createWorldOpenFlows().openWorld("selftest", () -> mc.setScreen(new net.minecraft.client.gui.screens.TitleScreen()));
+    mc.createWorldOpenFlows().openWorld("selftest", () -> mc.gui.setScreen(new net.minecraft.client.gui.screens.TitleScreen()));
    } else {
     mc.createWorldOpenFlows().createFreshLevel("selftest",
      new net.minecraft.world.level.LevelSettings("ChaosRanks selftest", net.minecraft.world.level.GameType.CREATIVE, new net.minecraft.world.level.LevelSettings.DifficultySettings(net.minecraft.world.Difficulty.PEACEFUL,false,false), true, net.minecraft.world.level.WorldDataConfiguration.DEFAULT),
@@ -60,13 +60,13 @@ public final class SelfTest {
      registries -> registries.lookupOrThrow(net.minecraft.core.registries.Registries.WORLD_PRESET).getOrThrow(net.minecraft.world.level.levelgen.presets.WorldPresets.FLAT).value().createWorldDimensions(), new net.minecraft.client.gui.screens.TitleScreen());
    }
   }
-  if (openingWorld && mc.screen instanceof net.minecraft.client.gui.screens.BackupConfirmScreen screen) {
+  if (openingWorld && mc.gui.screen() instanceof net.minecraft.client.gui.screens.BackupConfirmScreen screen) {
    String proceed = Component.translatable("selectWorld.backupQuestion.skipButton").getString();
    screen.children().stream().filter(child -> child instanceof net.minecraft.client.gui.components.Button b && b.getMessage().getString().equals(proceed))
     .findFirst().ifPresent(child -> ((net.minecraft.client.gui.components.Button) child).onPress(new net.minecraft.client.input.MouseButtonInfo(0,0)));
   }
-  if (mc.player == null && mc.screen != null) {
-   String screen = mc.screen.getClass().getName();
+  if (mc.player == null && mc.gui.screen() != null) {
+   String screen = mc.gui.screen().getClass().getName();
    if (!screen.equals(waitingScreen)) { waitingScreen = screen; ChaosRanks.LOGGER.info("[selftest] waiting screen={}", screen); }
   }
 		if (mc.player == null || mc.level == null || mc.getSingleplayerServer() == null) {
@@ -117,21 +117,31 @@ public final class SelfTest {
 				d.nameBold = true;
 				Services.PLATFORM.sendToServer(new RankPayloads.Save(d, "owner", RankStore.revision()));
 			}
-			case 100 -> mc.setScreen(null); // el servidor responde al guardado abriendo el menú
+			case 100 -> mc.gui.setScreen(null); // el servidor responde al guardado abriendo el menú
 			case 103 -> {
 				mc.player.connection.sendChat("renombrado: ahora soy JEFE");
 				ChaosRanks.LOGGER.info("[selftest] owner={} jefe={}", RankStore.get("owner") != null,
 						RankStore.get("jefe") != null);
 			}
-			case 110 -> shot(mc, "chat");
+			case 104 -> server.execute(() -> {
+    RankDef current = RankStore.get("jefe");
+    for (int index = 1; index <= 3; index++) player(server).sendSystemMessage(Component.empty().append(BadgeRenderer.build(current)).append(" Spacing check " + index));
+   });
+   case 110 -> shot(mc, "chat");
    case 111 -> {
     try {
      var method = net.minecraft.client.gui.components.ChatComponent.class.getDeclaredMethod("getLineHeight");
      method.setAccessible(true);
-     int height = (Integer) method.invoke(mc.gui.getChat());
+     int height = (Integer) method.invoke(mc.gui.hud.getChat());
      int expected = (int) (ChatSpacing.ROW_HEIGHT * (1 + mc.options.chatLineSpacing().get()));
      if (height != expected) throw new AssertionError("Chat row height mismatch: " + height);
      ChaosRanks.LOGGER.info("[selftest] chat spacing PASS: row={} badge={} gap={}", height, ChatSpacing.BADGE_HEIGHT, ChatSpacing.GAP);
+     double originalSpacing = mc.options.chatLineSpacing().get();
+     mc.options.chatLineSpacing().set(0.5);
+     int expanded = (Integer) method.invoke(mc.gui.hud.getChat());
+     mc.options.chatLineSpacing().set(originalSpacing);
+     if (expanded != 21) throw new AssertionError("Chat spacing setting not preserved");
+     ChaosRanks.LOGGER.info("[selftest] custom chat spacing PASS: row={}", expanded);
     } catch (ReflectiveOperationException error) { throw new AssertionError(error); }
    }
 			case 115 -> server.execute(() -> RankServer.open(player(server), "jefe"));
@@ -139,7 +149,7 @@ public final class SelfTest {
     if (Boolean.getBoolean("chaosranks.selftest.small")) { mc.options.guiScale().set(3); mc.resizeGui(); }
    }
    case 125 -> {
-    if (Boolean.getBoolean("chaosranks.selftest.small") && mc.screen instanceof RankManagerScreen screen) {
+    if (Boolean.getBoolean("chaosranks.selftest.small") && mc.gui.screen() instanceof RankManagerScreen screen) {
      double scale = MenuGeometry.scale(screen.width, screen.height);
      String off = com.chaos.ranks.Lang.tr("button.bold", com.chaos.ranks.Lang.yesNo(false)).getString();
      var button = screen.children().stream().filter(child -> child instanceof net.minecraft.client.gui.components.Button b && b.getMessage().getString().equals(off)).findFirst().orElseThrow();
@@ -157,7 +167,14 @@ public final class SelfTest {
 			case 150 -> shot(mc, "menu_colors");
 			case 152 -> tab(mc, 3);
 			case 160 -> shot(mc, "menu_chat");
-			case 165 -> mc.setScreen(null);
+			case 165 -> mc.gui.setScreen(null);
+   case 166 -> server.execute(() -> rank("network_delete", "DELETE", "star", 0xFF3B3B, 0xFFFFFF, null, 1));
+   case 169 -> Services.PLATFORM.sendToServer(new RankPayloads.Delete("network_delete", RankStore.revision()));
+   case 174 -> {
+    if (RankStore.get("network_delete") != null) throw new AssertionError("Network delete failed");
+    mc.gui.setScreen(null);
+    ChaosRanks.LOGGER.info("[selftest] network delete PASS");
+   }
 			default -> {}
 		}
 
@@ -188,7 +205,7 @@ public final class SelfTest {
 	}
 
 	private static void tab(Minecraft mc, int index) {
-		if (mc.screen instanceof RankManagerScreen screen) {
+		if (mc.gui.screen() instanceof RankManagerScreen screen) {
 			screen.showTab(index);
 		}
 	}
@@ -224,7 +241,7 @@ public final class SelfTest {
 		standX = p.getX();
 		standY = p.getY();
 		standZ = p.getZ() - 5;
-		ArmorStand stand = new ArmorStand(EntityType.ARMOR_STAND, level);
+		ArmorStand stand = new ArmorStand(net.minecraft.world.entity.EntityTypes.ARMOR_STAND, level);
 		stand.setPos(standX, standY, standZ);
 		stand.setCustomName(Component.literal("Steve"));
 		stand.setCustomNameVisible(true);
@@ -249,7 +266,7 @@ public final class SelfTest {
 	}
 
 	private static void shot(Minecraft mc, String name) {
-		Screenshot.grab(mc.gameDirectory, "selftest_" + (Boolean.getBoolean("chaosranks.selftest.small") ? "small_" : "") + name + ".png", mc.getMainRenderTarget(), 1,
+		Screenshot.grab(mc.gameDirectory, "selftest_" + (Boolean.getBoolean("chaosranks.selftest.small") ? "small_" : "") + name + ".png", mc.gameRenderer.mainRenderTarget(), 1,
 				msg -> ChaosRanks.LOGGER.info("[selftest] {}", msg.getString()));
 	}
 }

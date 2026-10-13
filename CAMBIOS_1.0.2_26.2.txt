@@ -1,0 +1,5 @@
+Chaos Ranks 1.0.2 para Minecraft 26.2
+Autor: Goddark83
+Requiere Java 25.
+
+Ports Fabric, Forge y NeoForge. Adaptados el acceso a pantallas y HUD, entidad de prueba y captura de imágenes. Recursos formato 88. Conservada y comprobada la corrección del chat: filas de 14 píxeles, etiquetas de 11 y espacio de 3. Soporta el ajuste de espaciado de Minecraft. Se prueban guardado, renombrado y borrado por red, las cuatro pestañas y el clic escalado del editor.

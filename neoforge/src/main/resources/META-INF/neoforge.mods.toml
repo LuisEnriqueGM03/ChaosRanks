@@ -10,13 +10,13 @@ description='''Pixel-art rank badges in chat, Tab and nametags, with an in-game 
 [[dependencies.chaosranks]]
 modId="neoforge"
 type="required"
-versionRange="[26.1.0.19-beta,26.1.1)"
+versionRange="[26.2.0.90,26.2.1)"
 ordering="NONE"
 side="BOTH"
 [[dependencies.chaosranks]]
 modId="minecraft"
 type="required"
-versionRange="[26.1,26.1.1)"
+versionRange="[26.2,26.2.1)"
 ordering="NONE"
 side="BOTH"
 

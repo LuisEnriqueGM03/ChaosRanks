@@ -6,7 +6,7 @@ import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import net.minecraft.client.gui.components.ChatComponent;
 import com.chaos.ranks.client.ChatSpacing;
 
-/** Keep drawing, background, scrolling and click capture on the same row height in 26.1. */
+/** Keep drawing, background, scrolling and click capture on the same row height in 26.2. */
 @Mixin(ChatComponent.class)
 abstract class ChatComponentMixin {
  @ModifyConstant(method = "extractRenderState(Lnet/minecraft/client/gui/components/ChatComponent$ChatGraphicsAccess;IILnet/minecraft/client/gui/components/ChatComponent$DisplayMode;)V", constant = @Constant(intValue = 9))

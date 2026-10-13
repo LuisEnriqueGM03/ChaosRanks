@@ -1,8 +1,10 @@
-## Chaos Ranks 1.0.2 - Minecraft 26.1
+## Chaos Ranks 1.0.2 - Minecraft 26.2
 
-Author: **Goddark83**.
+Author: **Goddark83**. Java 25.
 
-- Fix chat rank badges touching vertically in Minecraft 26.1.
-- Draw chat rows at 14 pixels for 11-pixel badges, leaving a 3-pixel gap.
-- Use the same height for drawing, backgrounds, scrolling and click capture.
-- Preserve the user chat line-spacing setting.
+- Fabric, Forge and NeoForge ports for Minecraft 26.2.
+- Updated screen/HUD access, resources format 88 and client integration.
+- Verified 14-pixel chat rows for 11-pixel rank badges, with a 3-pixel gap.
+- Preserves Minecraft chat line-spacing settings.
+- Atomic storage and backup recovery, revision checks and all 144 icons preserved.
+- Install the matching loader JAR on server and clients; Fabric requires Fabric API.

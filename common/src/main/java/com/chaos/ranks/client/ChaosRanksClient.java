@@ -12,8 +12,8 @@ public final class ChaosRanksClient {
    try {
     var ranks = ASSEMBLER.accept(payload);
     if (ranks == null) return;
-    if (client.screen instanceof RankManagerScreen screen) screen.update(ranks, payload.selectId(), payload.revision());
-    else client.setScreen(new RankManagerScreen(ranks, payload.selectId(), payload.revision()));
+    if (client.gui.screen() instanceof RankManagerScreen screen) screen.update(ranks, payload.selectId(), payload.revision());
+    else client.gui.setScreen(new RankManagerScreen(ranks, payload.selectId(), payload.revision()));
    } catch (Exception e) { ASSEMBLER.clear(); ChaosRanks.LOGGER.warn("Invalid rank manager response", e); }
   });
  }

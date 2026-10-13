@@ -1,12 +1,12 @@
-# Validación de Chaos Ranks 1.0.2 para Minecraft 26.1
+# Validación de Chaos Ranks 1.0.2 para Minecraft 26.2
 
-Autor: Goddark83. Java 25. Fabric Loader 0.19.5 / Fabric API 0.145.1, Forge 62.0.9 y NeoForge 26.1.0.19-beta.
+Autor: Goddark83. Java 25. Fabric Loader 0.19.5 / Fabric API 0.161.0, Forge 65.1.3 y NeoForge 26.2.0.90.
 
 Cada cargador ejecuta 82 comprobaciones de persistencia, recuperación, migración, revisiones, paquetes grandes, Unicode y escala. Los tres cargadores se prueban dentro de Minecraft con servidor integrado y mundos nuevos de desarrollo: guardado y renombrado por red, chat, Tab, etiquetas, cuatro pestañas del editor y un clic real en el menú pequeño a 342 × 256 unidades. Se revisan capturas del menú de cada cargador.
 
 Se adaptaron Identifier, FontDescription, permisos de gamemaster, NameAndId, GUI por extracción, eventos del ratón con modificadores, eventos de Forge y envío cliente de NeoForge. La nueva extracción requiere ARGB opaco para textos y composición explícita del panel dentro de su pose; se desactiva la sombra de los glifos de las etiquetas para evitar interferencias entre capas.
 
-Los JAR se inspeccionan por metadatos, autor, objetivo Java 25, recursos formato 84, proveedor de plataforma y 144 iconos. Forge utiliza compatibilidad Mixin JAVA_21 debido al enum disponible en su Mixin integrado; el mod y Minecraft siguen requiriendo Java 25.
+Los JAR se inspeccionan por metadatos, autor, objetivo Java 25, recursos formato 88, proveedor de plataforma y 144 iconos. Forge utiliza compatibilidad Mixin JAVA_21 debido al enum disponible en su Mixin integrado; el mod y Minecraft siguen requiriendo Java 25.
 
 No se hizo una sesión con dos clientes independientes en servidor dedicado ni una ejecución separada en un lanzador externo. No se modificaron los mundos originales.
 
@@ -23,3 +23,7 @@ La corrección del chat se comprueba dentro del juego: getLineHeight devuelve 14 
 En Forge y NeoForge, la recompilación simplifica el cálculo de filas a una constante double; Fabric reutiliza una variable int. El mixin cubre ambas formas. Una prueba de altura de interacción por sí sola no confirma el dibujo: se verifican las capturas reales de cada cargador.
 
 Medición adicional de capturas: `python tools/check-chat-screenshot.py <captura>` verifica el paso de 42 píxeles físicos (14 de interfaz) entre las tres primeras etiquetas rojas consecutivas del escenario de prueba a escala ×3.
+
+Para 26.2 se comprueban también el ajuste personalizado de espaciado (21 píxeles con opción 0.5) y la creación y eliminación de un rango por red. Se mantienen las mediciones de captura de 42 píxeles por fila a escala ×3.
+
+El escenario 26.2 emite tres mensajes consecutivos del mismo rango antes de la captura, para medir el espaciado sin depender del orden de los rangos del mundo de prueba.
