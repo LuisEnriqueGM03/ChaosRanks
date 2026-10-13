@@ -124,6 +124,16 @@ public final class SelfTest {
 						RankStore.get("jefe") != null);
 			}
 			case 110 -> shot(mc, "chat");
+   case 111 -> {
+    try {
+     var method = net.minecraft.client.gui.components.ChatComponent.class.getDeclaredMethod("getLineHeight");
+     method.setAccessible(true);
+     int height = (Integer) method.invoke(mc.gui.getChat());
+     int expected = (int) (ChatSpacing.ROW_HEIGHT * (1 + mc.options.chatLineSpacing().get()));
+     if (height != expected) throw new AssertionError("Chat row height mismatch: " + height);
+     ChaosRanks.LOGGER.info("[selftest] chat spacing PASS: row={} badge={} gap={}", height, ChatSpacing.BADGE_HEIGHT, ChatSpacing.GAP);
+    } catch (ReflectiveOperationException error) { throw new AssertionError(error); }
+   }
 			case 115 -> server.execute(() -> RankServer.open(player(server), "jefe"));
    case 117 -> {
     if (Boolean.getBoolean("chaosranks.selftest.small")) { mc.options.guiScale().set(3); mc.resizeGui(); }

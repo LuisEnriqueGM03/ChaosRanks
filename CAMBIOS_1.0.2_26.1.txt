@@ -1,0 +1,4 @@
+Chaos Ranks 1.0.2 para Minecraft 26.1
+Autor: Goddark83
+
+Corregida la separación vertical entre etiquetas del chat. Minecraft 26.1 dibujaba filas de 9 píxeles pese a la corrección anterior de la altura usada para contar líneas. Ahora dibujo e interacción usan 14 píxeles: etiqueta de 11 y espacio de 3. Se respeta el ajuste de espaciado de Minecraft. Java 25.

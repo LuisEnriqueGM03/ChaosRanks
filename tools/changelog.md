@@ -1,9 +1,8 @@
-## Chaos Ranks 1.0.1 - Minecraft 26.1
+## Chaos Ranks 1.0.2 - Minecraft 26.1
 
-Author: **Goddark83**. Requires Java 25.
+Author: **Goddark83**.
 
-- Fabric, Forge and NeoForge ports for Minecraft 26.1.
-- Adapted GUI extraction, ARGB text, FontDescription, mouse events and administrative permissions.
-- Native loader events and client networking updated.
-- Resource format 84; atomic rank storage and revision checks preserved.
-- Install the matching loader JAR on server and clients. Fabric requires Fabric API.
+- Fix chat rank badges touching vertically in Minecraft 26.1.
+- Draw chat rows at 14 pixels for 11-pixel badges, leaving a 3-pixel gap.
+- Use the same height for drawing, backgrounds, scrolling and click capture.
+- Preserve the user chat line-spacing setting.
