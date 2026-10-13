@@ -1,0 +1,6 @@
+Chaos Ranks 1.0.1 para Minecraft 1.21.4
+Autor: Goddark83
+
+Fabric API 0.119.4, NeoForge 21.4.158 y Forge 54.1.14. Java 21. Adaptado el dibujo de texturas al nuevo RenderType. Recursos y datos para Minecraft 1.21.4. Se conserva el formato de rangos, guardado atómico, respaldos, permisos y revisión de ediciones.
+
+Ver VALIDATION.md para resultados de pruebas.

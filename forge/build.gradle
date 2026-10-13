@@ -10,7 +10,7 @@ minecraft {
  mappings channel: 'official', version: minecraft_version
  runs {
   configureEach {
-   workingDirectory file('run-1.21.1')
+   workingDirectory file('run-1.21.4')
    mods { chaosranks { source sourceSets.main } }
   }
   client { }

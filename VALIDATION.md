@@ -1,31 +1,13 @@
-# Validaci√≥n de los ports de Chaos Ranks 1.0.1
+# ValidaciÛn de Chaos Ranks 1.0.1 para Minecraft 1.21.4
 
-Minecraft 1.21.1, Java 21, NeoForge 21.1.257 y Forge 52.1.16.
+Autor: Goddark83. Java 21. Fabric API 0.119.4, NeoForge 21.4.158 y Forge 54.1.14.
 
-| Comprobaci√≥n | NeoForge | Forge |
-|---|---|---|
-| Compilaci√≥n del mod y fuentes | Aprobada | Aprobada |
-| Regresiones de persistencia, validaci√≥n, revisiones y codecs | 82 comprobaciones | 82 comprobaciones |
-| Chat, Tab, etiquetas y cuatro pesta√±as | Aprobada | Aprobada |
-| Guardado por red y renombrado | Aprobada | Aprobada |
-| Men√∫ a 342 √ó 256 unidades y clic escalado | Aprobada | Aprobada |
-| Inicio preliminar del cargador en modo servidor | Aprobado | Aprobado |
+El build de cada cargador ejecuta 82 comprobaciones de persistencia, revisiÛn, validaciÛn de paquetes, listas grandes, Unicode e interfaz. Las autopruebas del juego crean mundos nuevos de desarrollo y comprueban el renombrado por red, chat, Tab, etiquetas y las cuatro pestaÒas del editor. El modo pequeÒo verifica un clic real escalado a 342 ◊ 256 unidades. Se inspeccionan los recursos, metadatos, Java y proveedores de plataforma de los JAR finales.
 
-Se revisaron capturas de ambos cargadores y se inspeccionan los JAR con `python tools/validate-ports.py`: identificador, versi√≥n, autor, rangos de dependencia, Java 21, proveedor de plataforma, recursos, licencia y ausencia de clases de otros cargadores.
+No se realizÛ una sesiÛn con dos clientes independientes en servidor dedicado ni una ejecuciÛn separada en un lanzador externo. Los mundos originales no se modificaron.
 
-Las pruebas de comportamiento usan un servidor integrado y una copia aislada del mundo `selftest`. El modo servidor preliminar termina al inicializar sus ajustes o en la comprobaci√≥n de la EULA: no se acept√≥ ese acuerdo ni se abri√≥ un servidor de juego. No se hizo una sesi√≥n con dos clientes independientes en un servidor dedicado.
+NeoForge: Gradle 9.7.1 y Java 21. Forge: `gradlew-forge` selecciona Gradle 8.12 y Java 21. Fabric: Gradle 9.7.1 y Java 25 para las herramientas Loom, con objetivo Java 21 para el mod.
 
-Forge requiere reunir clases y recursos en un mismo directorio para sus lanzamientos de desarrollo. Se agreg√≥ `pack.mcmeta` para recursos y datos de Minecraft 1.21.1 y se fij√≥ la versi√≥n m√≠nima de Mixin. Las autopruebas abren el mundo desde la pantalla inicial, despu√©s de completar la inicializaci√≥n del cargador; Quick Play evitaba parte de esa inicializaci√≥n en el entorno Forge probado.
+En Windows usar `.bat`. Compilar cada cargador por separado con `-Ploader=fabric`, `-Ploader=forge` o `-Ploader=neoforge`. Los JAR est·n en `<cargador>/build/libs`. Las autopruebas modifican ˙nicamente el mundo `selftest` de desarrollo.
 
-Las pruebas no muestran errores del mod tras esas correcciones. Permanecen avisos del entorno de desarrollo sobre bibliotecas, sonidos y paquetes de la copia del mundo anterior. No se alteraron los mundos originales.
-
-## Reproducci√≥n
-
-- NeoForge: `gradlew -Ploader=neoforge build` y `gradlew -Ploader=neoforge :neoforge:runSelftestSmall`.
-- Forge: `gradlew-forge :forge:build` y `gradlew-forge :forge:runSelftestSmall`.
-- Usar Java 21 y la copia de prueba en `<cargador>/run-1.21.1/saves/selftest`.
-- En Windows usar `.bat`; en otros sistemas dar permiso de ejecuci√≥n a los lanzadores.
-
-Las ramas seleccionan su cargador mediante `default_loader`. El lanzador espec√≠fico de Forge utiliza Gradle 8.12; NeoForge y Fabric usan Gradle 9.7.1. Los archivos publicados se identifican por cargador, Minecraft y versi√≥n del mod.
-
-El adaptador Fabric del m√≥dulo compartido tambi√©n se comprueba con su herramienta Loom 1.18 (Java 25 para ejecutar Gradle, objetivo Java 21). La rama Fabric publicada anteriormente conserva su estructura original.
+Se corrigiÛ el recorte de listas y vista previa: en 1.21.4 GuiGraphics transforma los lÌmites con la pose actual, por lo que no deben escalarse dos veces.

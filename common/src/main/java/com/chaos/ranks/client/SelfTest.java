@@ -47,10 +47,18 @@ public final class SelfTest {
 
 
 	public static void tick(Minecraft mc) {
+  if (mc.screen instanceof net.minecraft.client.gui.screens.AccessibilityOnboardingScreen) mc.setScreen(new net.minecraft.client.gui.screens.TitleScreen());
   // Open the isolated test world after loader initialization, through the normal title-screen flow.
   if (!openingWorld && mc.getSingleplayerServer() == null && mc.screen instanceof net.minecraft.client.gui.screens.TitleScreen) {
    openingWorld = true;
-   mc.createWorldOpenFlows().openWorld("selftest", () -> mc.setScreen(new net.minecraft.client.gui.screens.TitleScreen()));
+   if (java.nio.file.Files.exists(mc.gameDirectory.toPath().resolve("saves/selftest/level.dat"))) {
+    mc.createWorldOpenFlows().openWorld("selftest", () -> mc.setScreen(new net.minecraft.client.gui.screens.TitleScreen()));
+   } else {
+    mc.createWorldOpenFlows().createFreshLevel("selftest",
+     new net.minecraft.world.level.LevelSettings("ChaosRanks selftest", net.minecraft.world.level.GameType.CREATIVE, false, net.minecraft.world.Difficulty.PEACEFUL, true, new GameRules(net.minecraft.world.flag.FeatureFlags.DEFAULT_FLAGS), net.minecraft.world.level.WorldDataConfiguration.DEFAULT),
+     new net.minecraft.world.level.levelgen.WorldOptions(83L,false,false),
+     registries -> registries.lookupOrThrow(net.minecraft.core.registries.Registries.WORLD_PRESET).getOrThrow(net.minecraft.world.level.levelgen.presets.WorldPresets.FLAT).value().createWorldDimensions(), new net.minecraft.client.gui.screens.TitleScreen());
+   }
   }
   if (openingWorld && mc.screen instanceof net.minecraft.client.gui.screens.BackupConfirmScreen screen) {
    String proceed = Component.translatable("selectWorld.backupQuestion.skipButton").getString();

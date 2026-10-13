@@ -439,13 +439,13 @@ public class RankManagerScreen extends Screen {
 
 		int x = left();
 		int y = top();
-		g.blitSprite(PANEL, x, y, W, H);
-		g.blitSprite(INSET, x + PAD, y + TOP, LIST_W, LIST_BOTTOM - TOP);
-		g.blitSprite(INSET, x + RX, y + TOP, RW, PREVIEW_BOTTOM - TOP);
+		g.blitSprite(net.minecraft.client.renderer.RenderType::guiTextured, PANEL, x, y, W, H);
+		g.blitSprite(net.minecraft.client.renderer.RenderType::guiTextured, INSET, x + PAD, y + TOP, LIST_W, LIST_BOTTOM - TOP);
+		g.blitSprite(net.minecraft.client.renderer.RenderType::guiTextured, INSET, x + RX, y + TOP, RW, PREVIEW_BOTTOM - TOP);
 		// Línea dorada bajo el título.
 		g.fill(x + PAD, y + 22, x + W - PAD, y + 23, 0xFF8A5A12);
 		for (int[] f : fields) {
-			g.blitSprite(INSET, f[0], f[1], f[2], f[3]);
+			g.blitSprite(net.minecraft.client.renderer.RenderType::guiTextured, INSET, f[0], f[1], f[2], f[3]);
 		}
 	}
 
@@ -494,10 +494,9 @@ public class RankManagerScreen extends Screen {
 		g.drawString(font, editing, x + W - PAD - 2 - font.width(editing), y + 10, LABEL, false);
 	}
 
- // GuiGraphics scissor coordinates do not follow the pose transform.
+ // Minecraft 1.21.4 applies the current pose to scissor bounds.
  private void scissor(GuiGraphics g, int left, int top, int right, int bottom) {
-  g.enableScissor(MenuGeometry.scissorStart(left, uiScale), MenuGeometry.scissorStart(top, uiScale),
-   MenuGeometry.scissorEnd(right, uiScale), MenuGeometry.scissorEnd(bottom, uiScale));
+  g.enableScissor(left, top, right, bottom);
  }
 
 	private void renderList(GuiGraphics g, int x, int y, int mx, int my) {
@@ -576,7 +575,7 @@ public class RankManagerScreen extends Screen {
 					g.fill(cx - 1, cy - 1, cx + ICON_CELL - 1, cy + ICON_CELL - 1, GOLD_LIGHT);
 					g.fill(cx, cy, cx + ICON_CELL - 2, cy + ICON_CELL - 2, 0xFF000000 | draft.bgColor);
 				} else {
-					g.blitSprite(CELL, cx, cy, ICON_CELL - 2, ICON_CELL - 2);
+					g.blitSprite(net.minecraft.client.renderer.RenderType::guiTextured, CELL, cx, cy, ICON_CELL - 2, ICON_CELL - 2);
 					if (index == hovered) {
 						g.fill(cx + 1, cy + 1, cx + ICON_CELL - 3, cy + ICON_CELL - 3, 0x40FFE08A);
 					}

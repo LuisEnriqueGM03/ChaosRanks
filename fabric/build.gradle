@@ -8,6 +8,7 @@ dependencies {
 }
 loom {
  runs {
-  selftest { client(); runDir '../run-1.21.1'; vmArg '-Dchaosranks.selftest=true' }
+  selftestSmall { client(); runDir '../run-1.21.4-small'; vmArg '-Dchaosranks.selftest=true'; vmArg '-Dchaosranks.selftest.small=true'; programArgs '--width', '1024', '--height', '768' }
+  selftest { client(); runDir '../run-1.21.4'; vmArg '-Dchaosranks.selftest=true' }
  }
 }
