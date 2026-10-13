@@ -3,7 +3,7 @@ import json, tomllib, zipfile, hashlib
 ROOT=Path(__file__).resolve().parent.parent
 records=[]
 for loader in ('fabric','forge','neoforge'):
- jar=ROOT/loader/'build/libs'/f'chaosranks-{loader}-26.1-1.0.1.jar'
+ jar=ROOT/loader/'build/libs'/f'chaosranks-{loader}-26.1-1.0.2.jar'
  with zipfile.ZipFile(jar) as z:
   if loader=='fabric':
    m=json.loads(z.read('fabric.mod.json')); assert m['authors']==['Goddark83'] and m['depends']['minecraft']=='~26.1' and m['depends']['java']=='>=25'
@@ -17,6 +17,6 @@ for loader in ('fabric','forge','neoforge'):
   assert len(json.loads(z.read('assets/chaosranks/badge_meta.json'))['icons'])==144
   assert 'LICENSE' in z.namelist()
   assert not any(n.startswith(f'com/chaos/ranks/{other}/') for other in ('fabric','forge','neoforge') if other!=loader for n in z.namelist())
- records.append(dict(loader=loader,minecraft='26.1',version='1.0.1',author='Goddark83',file=jar.name,sha256=hashlib.sha256(jar.read_bytes()).hexdigest(),branch=f'{loader}-26.1'))
+ records.append(dict(loader=loader,minecraft='26.1',version='1.0.2',author='Goddark83',file=jar.name,sha256=hashlib.sha256(jar.read_bytes()).hexdigest(),branch=f'{loader}-26.1'))
  print(loader+': OK')
 (ROOT/'release-artifacts-26.1.json').write_text(json.dumps(records,indent=2)+'\n')
