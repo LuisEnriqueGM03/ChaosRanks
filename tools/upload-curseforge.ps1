@@ -35,15 +35,20 @@ $ids = foreach ($name in $wanted) {
 	$match.id
 }
 
-$metadata = @{
+$projectRelations = @()
+if ($Loader -eq 'fabric') { $projectRelations = @(@{ slug = 'fabric-api'; type = 'requiredDependency' }) }
+
+$metadataData = @{
 	# ReadAllText: en PowerShell 5.1, Get-Content -Raw añade propiedades que ConvertTo-Json serializa.
 	changelog     = [IO.File]::ReadAllText("$root\tools\changelog.md", [Text.Encoding]::UTF8)
 	changelogType = "markdown"
 	displayName   = "Chaos Ranks $version - $loaderLabel 1.21.1"
 	gameVersions  = @($ids)
 	releaseType   = $ReleaseType
-	relations     = @{ projects = $(if ($Loader -eq "fabric") { @(@{ slug = "fabric-api"; type = "requiredDependency" }) } else { @() }) }
-} | ConvertTo-Json -Depth 5
+	relations     = @{ projects = $projectRelations }
+}
+if ($Loader -ne 'fabric') { $metadataData.Remove('relations') }
+$metadata = $metadataData | ConvertTo-Json -Depth 5
 $metaFile = Join-Path $env:TEMP ("chaosranks-cf-" + [guid]::NewGuid().ToString() + ".json")
 [IO.File]::WriteAllText($metaFile, $metadata, (New-Object Text.UTF8Encoding $false))
 
