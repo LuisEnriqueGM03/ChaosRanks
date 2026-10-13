@@ -6,25 +6,24 @@ import com.chaos.ranks.rank.RankDef;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+
+import net.minecraft.resources.ResourceLocation;
 
 /** Versioned, bounded editor messages; large rank lists are split before encoding. */
 public final class RankPayloads {
  private static final Gson GSON = new Gson();
  public static final int CHUNK_CHARS = 16000;
  public static final int MAX_JSON_CHARS = 4 * 1024 * 1024;
+ public interface Message { ResourceLocation type(); }
+ public record Codec<T>(java.util.function.Function<WireBuffer,T> reader, java.util.function.BiConsumer<WireBuffer,T> writer) {
+  public T decode(ByteBuf buffer) { return reader.apply(new WireBuffer(buffer)); }
+  public void encode(ByteBuf buffer, T value) { writer.accept(new WireBuffer(buffer), value); }
+ }
  private RankPayloads() {}
- public record OpenManager(String ranksJson, String selectId, long revision, int page, int pages) implements CustomPacketPayload {
-  public static final Type<OpenManager> TYPE = new Type<>(ChaosRanks.id("open_manager_v2"));
-  public static final StreamCodec<ByteBuf, OpenManager> CODEC = StreamCodec.composite(
-   ByteBufCodecs.stringUtf8(CHUNK_CHARS), OpenManager::ranksJson,
-   ByteBufCodecs.stringUtf8(64), OpenManager::selectId,
-   ByteBufCodecs.VAR_LONG, OpenManager::revision,
-   ByteBufCodecs.VAR_INT, OpenManager::page,
-   ByteBufCodecs.VAR_INT, OpenManager::pages, OpenManager::new);
-  @Override public Type<? extends CustomPacketPayload> type() { return TYPE; }
+ public record OpenManager(String ranksJson, String selectId, long revision, int page, int pages) implements Message {
+  public static final ResourceLocation TYPE = ChaosRanks.id("open_manager_v2");
+  public static final Codec<OpenManager> CODEC = new Codec<>(b -> new OpenManager(b.readUtf(CHUNK_CHARS), b.readUtf(64), b.readVarLong(), b.readVarInt(), b.readVarInt()), (b,p) -> { b.writeUtf(p.ranksJson(), CHUNK_CHARS); b.writeUtf(p.selectId(),64); b.writeVarLong(p.revision()); b.writeVarInt(p.page()); b.writeVarInt(p.pages()); });
+  public ResourceLocation type() { return TYPE; }
  }
  public static List<OpenManager> pages(List<RankDef> ranks, String selectId, long revision) {
   String json = GSON.toJson(ranks);
@@ -59,21 +58,16 @@ public final class RankPayloads {
    } finally { clear(); }
   }
  }
- public record Save(String rankJson, String originalId, long revision) implements CustomPacketPayload {
-  public static final Type<Save> TYPE = new Type<>(ChaosRanks.id("save_rank_v2"));
-  public static final StreamCodec<ByteBuf, Save> CODEC = StreamCodec.composite(
-   ByteBufCodecs.stringUtf8(4096), Save::rankJson,
-   ByteBufCodecs.stringUtf8(64), Save::originalId,
-   ByteBufCodecs.VAR_LONG, Save::revision, Save::new);
+ public record Save(String rankJson, String originalId, long revision) implements Message {
+  public static final ResourceLocation TYPE = ChaosRanks.id("save_rank_v2");
+  public static final Codec<Save> CODEC = new Codec<>(b -> new Save(b.readUtf(4096), b.readUtf(64), b.readVarLong()), (b,p) -> { b.writeUtf(p.rankJson(),4096); b.writeUtf(p.originalId(),64); b.writeVarLong(p.revision()); });
   public Save(RankDef def, String originalId, long revision) { this(GSON.toJson(def), originalId, revision); }
   public RankDef rank() { return Objects.requireNonNull(GSON.fromJson(rankJson, RankDef.class), "Null rank"); }
-  @Override public Type<? extends CustomPacketPayload> type() { return TYPE; }
+  public ResourceLocation type() { return TYPE; }
  }
- public record Delete(String id, long revision) implements CustomPacketPayload {
-  public static final Type<Delete> TYPE = new Type<>(ChaosRanks.id("delete_rank_v2"));
-  public static final StreamCodec<ByteBuf, Delete> CODEC = StreamCodec.composite(
-   ByteBufCodecs.stringUtf8(64), Delete::id,
-   ByteBufCodecs.VAR_LONG, Delete::revision, Delete::new);
-  @Override public Type<? extends CustomPacketPayload> type() { return TYPE; }
+ public record Delete(String id, long revision) implements Message {
+  public static final ResourceLocation TYPE = ChaosRanks.id("delete_rank_v2");
+  public static final Codec<Delete> CODEC = new Codec<>(b -> new Delete(b.readUtf(64), b.readVarLong()), (b,p) -> { b.writeUtf(p.id(),64); b.writeVarLong(p.revision()); });
+  public ResourceLocation type() { return TYPE; }
  }
 }

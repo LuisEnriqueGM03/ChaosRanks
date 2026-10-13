@@ -99,6 +99,20 @@ public final class RegressionTests {
 
   fails(() -> new RankPayloads.Save("null", "", 0).rank(), "null network definition rejected");
   fails(() -> new RankPayloads.Save("{", "", 0).rank(), "malformed network definition rejected");
+  var wire = Unpooled.buffer();
+  try {
+   var save = new RankPayloads.Save(rank("vip"), "vip", Long.MAX_VALUE);
+   RankPayloads.Save.CODEC.encode(wire, save);
+   check(RankPayloads.Save.CODEC.decode(wire).equals(save), "save packet roundtrip");
+   var delete = new RankPayloads.Delete("vip", 42);
+   RankPayloads.Delete.CODEC.encode(wire, delete);
+   check(RankPayloads.Delete.CODEC.decode(wire).equals(delete), "delete packet roundtrip");
+   fails(() -> RankPayloads.Save.CODEC.encode(wire, new RankPayloads.Save("X".repeat(4097), "", 0)), "oversized save rejected");
+   wire.clear().writeByte(127);
+   fails(() -> RankPayloads.Save.CODEC.decode(wire), "truncated packet rejected");
+   wire.clear().writeBytes(new byte[]{(byte)128,(byte)128,(byte)128,(byte)128,(byte)128});
+   fails(() -> RankPayloads.Delete.CODEC.decode(wire), "oversized VarInt rejected");
+  } finally { wire.release(); }
   List<RankDef> large = new ArrayList<>(); for (int i = 0; i < 1000; i++) large.add(rank("rank_" + i));
   var packets = RankPayloads.pages(large, "rank_500", 42); check(packets.size() > 1, "large list split");
   var assembler = new RankPayloads.Assembler(); List<RankDef> received = null;
@@ -121,7 +135,7 @@ public final class RegressionTests {
    try { RankPayloads.OpenManager.CODEC.encode(buf, packet); unicodeResult = assembler.accept(RankPayloads.OpenManager.CODEC.decode(buf)); }
    finally { buf.release(); }
   }
-  check(unicodeResult != null && unicodeResult.getFirst().separator.equals(unicode.separator), "surrogate boundary roundtrip");
+  check(unicodeResult != null && unicodeResult.get(0).separator.equals(unicode.separator), "surrogate boundary roundtrip");
   RankDef oversized = rank("oversized"); oversized.label = "X".repeat(RankPayloads.MAX_JSON_CHARS);
   fails(() -> RankPayloads.pages(List.of(oversized), "", 0), "list size budget enforced");
   RankDef dirty = rank("dirty"); dirty.label = "   "; dirty.icon = "unknown"; dirty.priority = 500; dirty.textColor = -1; dirty.separator = "a\nb\u202Ec";

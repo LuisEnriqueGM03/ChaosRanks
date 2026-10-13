@@ -379,7 +379,7 @@ public class RankManagerScreen extends Screen {
 	}
 
 	@Override
-	public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+	public boolean mouseScrolled(double mouseX, double mouseY, double scrollY) {
   mouseX /= uiScale; mouseY /= uiScale;
 		int mx = (int) mouseX - left();
 		if (mx >= PAD && mx < PAD + LIST_W && mouseY - top() >= TOP && mouseY - top() < LIST_BOTTOM) {
@@ -391,7 +391,7 @@ public class RankManagerScreen extends Screen {
 			iconScroll = Math.max(0, Math.min(maxIconScroll(), iconScroll - (int) Math.signum(scrollY)));
 			return true;
 		}
-		return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
+		return super.mouseScrolled(mouseX, mouseY, scrollY);
 	}
 
  private int maxListScroll() { return Math.max(0, ranks.size() * ROW_H - (LIST_BOTTOM - TOP - 4)); }
@@ -435,26 +435,27 @@ public class RankManagerScreen extends Screen {
 	// Dibujo
 
 	@Override
-	public void renderBackground(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+	public void renderBackground(GuiGraphics g) {
 
 		int x = left();
 		int y = top();
-		g.blitSprite(PANEL, x, y, W, H);
-		g.blitSprite(INSET, x + PAD, y + TOP, LIST_W, LIST_BOTTOM - TOP);
-		g.blitSprite(INSET, x + RX, y + TOP, RW, PREVIEW_BOTTOM - TOP);
+		LegacySprites.blit(g, PANEL, x, y, W, H);
+		LegacySprites.blit(g, INSET, x + PAD, y + TOP, LIST_W, LIST_BOTTOM - TOP);
+		LegacySprites.blit(g, INSET, x + RX, y + TOP, RW, PREVIEW_BOTTOM - TOP);
 		// Línea dorada bajo el título.
 		g.fill(x + PAD, y + 22, x + W - PAD, y + 23, 0xFF8A5A12);
 		for (int[] f : fields) {
-			g.blitSprite(INSET, f[0], f[1], f[2], f[3]);
+			LegacySprites.blit(g, INSET, f[0], f[1], f[2], f[3]);
 		}
 	}
 
 	@Override
 	public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
-  super.renderBackground(g, mouseX, mouseY, partialTick);
+  super.renderBackground(g);
   g.pose().pushPose();
   g.pose().scale((float) uiScale, (float) uiScale, 1);
   mouseX = (int) (mouseX / uiScale); mouseY = (int) (mouseY / uiScale);
+		renderBackground(g);
 		super.render(g, mouseX, mouseY, partialTick);
 		int x = left();
 		int y = top();
@@ -576,7 +577,7 @@ public class RankManagerScreen extends Screen {
 					g.fill(cx - 1, cy - 1, cx + ICON_CELL - 1, cy + ICON_CELL - 1, GOLD_LIGHT);
 					g.fill(cx, cy, cx + ICON_CELL - 2, cy + ICON_CELL - 2, 0xFF000000 | draft.bgColor);
 				} else {
-					g.blitSprite(CELL, cx, cy, ICON_CELL - 2, ICON_CELL - 2);
+					LegacySprites.blit(g, CELL, cx, cy, ICON_CELL - 2, ICON_CELL - 2);
 					if (index == hovered) {
 						g.fill(cx + 1, cy + 1, cx + ICON_CELL - 3, cy + ICON_CELL - 3, 0x40FFE08A);
 					}

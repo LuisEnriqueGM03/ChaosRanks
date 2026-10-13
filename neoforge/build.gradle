@@ -1,20 +1,15 @@
-plugins { id 'net.neoforged.moddev' version "${moddev_version}" }
+plugins { id 'net.neoforged.moddev.legacyforge' version "${moddev_version}" }
 apply from: rootProject.file('gradle/loader.gradle')
-neoForge {
- version = neoforge_version
+legacyForge {
+ enable { neoForgeVersion = "${minecraft_version}-${neoforge_version}"; disableRecompilation = true }
  runs {
-  client { client(); gameDirectory = file('run-1.21.1') }
-  server { server(); gameDirectory = file('run-1.21.1'); programArgument '--nogui' }
-  serverSmoke { server(); gameDirectory = file('run-server-smoke'); programArgument '--initSettings' }
-  selftest {
-   client(); gameDirectory = file('run-1.21.1')
-   systemProperty 'chaosranks.selftest', 'true'
-  }
-  selftestSmall {
-   client(); gameDirectory = file('run-1.21.1')
-   systemProperty 'chaosranks.selftest', 'true'; systemProperty 'chaosranks.selftest.small', 'true'
-   programArguments.addAll('--width', '1024', '--height', '768')
-  }
+  client { client(); gameDirectory = file('run-1.20.1') }
+  server { server(); gameDirectory = file('run-1.20.1') }
+  selftest { client(); gameDirectory = file('run-1.20.1'); systemProperty 'chaosranks.selftest', 'true' }
+  selftestSmall { client(); gameDirectory = file('run-1.20.1'); systemProperty 'chaosranks.selftest', 'true'; systemProperty 'chaosranks.selftest.small', 'true'; programArguments.addAll('--width','1024','--height','768') }
  }
  mods { chaosranks { sourceSet sourceSets.main } }
 }
+dependencies { annotationProcessor 'org.spongepowered:mixin:0.8.5:processor' }
+mixin { add sourceSets.main, 'chaosranks.refmap.json'; config 'chaosranks.mixins.json' }
+jar { manifest { attributes('MixinConfigs': 'chaosranks.mixins.json') } }

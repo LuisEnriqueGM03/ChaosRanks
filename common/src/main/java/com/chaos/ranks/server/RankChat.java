@@ -34,8 +34,8 @@ public final class RankChat {
 	public static MutableComponent format(String separator, int separatorColor, int messageColor, Component message) {
 		MutableComponent out = Component.empty();
 		if (separator != null && !separator.isEmpty()) {
-			out.append(Component.literal(separator + " ").withColor(separatorColor));
+			out.append(Component.literal(separator + " ").withStyle(style -> style.withColor(separatorColor)));
 		}
-		return out.append(Component.empty().withColor(messageColor).append(message));
+		return out.append(Component.empty().withStyle(style -> style.withColor(messageColor)).append(message));
 	}
 }

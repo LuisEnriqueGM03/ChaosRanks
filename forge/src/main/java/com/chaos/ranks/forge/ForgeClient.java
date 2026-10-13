@@ -11,6 +11,6 @@ public final class ForgeClient {
   MinecraftForge.EVENT_BUS.addListener(ForgeClient::logout);
  }
  public static void receive(RankPayloads.OpenManager payload) { ChaosRanksClient.receive(payload); }
- private static void tick(TickEvent.ClientTickEvent.Post event) { ChaosRanksClient.tick(); }
+ private static void tick(TickEvent.ClientTickEvent event) { if (event.phase == TickEvent.Phase.END) ChaosRanksClient.tick(); }
  private static void logout(ClientPlayerNetworkEvent.LoggingOut event) { ChaosRanksClient.disconnected(); }
 }

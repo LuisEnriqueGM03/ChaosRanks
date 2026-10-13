@@ -15,7 +15,7 @@ sourceSets.main {
 sourceSets.test.java.srcDir '../common/src/test/java'
 sourceSets.test.compileClasspath += sourceSets.main.compileClasspath
 sourceSets.test.runtimeClasspath += sourceSets.main.runtimeClasspath
-tasks.withType(JavaCompile).configureEach { options.encoding = 'UTF-8'; options.release = 21 }
+tasks.withType(JavaCompile).configureEach { options.encoding = 'UTF-8'; options.release = 17 }
 dependencies { compileOnly 'org.jetbrains:annotations:24.1.0' }
 processResources {
  def props = [version: version, minecraft_version: minecraft_version]

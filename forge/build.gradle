@@ -1,35 +1,15 @@
-plugins {
- id 'net.minecraftforge.gradle' version '6.0.54'
- id 'org.spongepowered.mixin' version '0.7-SNAPSHOT'
-}
+plugins { id 'net.neoforged.moddev.legacyforge' version "${moddev_version}" }
 apply from: rootProject.file('gradle/loader.gradle')
-// Forge 52 development launches require one directory for classes and mod resources.
-sourceSets.main.output.resourcesDir = sourceSets.main.java.destinationDirectory.get().asFile
-tasks.named('processResources') { destinationDir = sourceSets.main.java.destinationDirectory.get().asFile }
-minecraft {
- mappings channel: 'official', version: minecraft_version
+legacyForge {
+ enable { forgeVersion = "${minecraft_version}-${forge_version}"; disableRecompilation = true }
  runs {
-  configureEach {
-   workingDirectory file('run-1.21.1')
-   mods { chaosranks { source sourceSets.main } }
-  }
-  client { }
-  server { args '--nogui' }
-  serverSmoke { parent runs.server; workingDirectory file('run-server-smoke'); args '--initSettings' }
-  selftest {
-   parent runs.client
-   property 'chaosranks.selftest', 'true'
-  }
-  selftestSmall {
-   parent runs.client
-   property 'chaosranks.selftest', 'true'; property 'chaosranks.selftest.small', 'true'
-   args '--width', '1024', '--height', '768'
-  }
+  client { client(); gameDirectory = file('run-1.20.1') }
+  server { server(); gameDirectory = file('run-1.20.1') }
+  selftest { client(); gameDirectory = file('run-1.20.1'); systemProperty 'chaosranks.selftest', 'true' }
+  selftestSmall { client(); gameDirectory = file('run-1.20.1'); systemProperty 'chaosranks.selftest', 'true'; systemProperty 'chaosranks.selftest.small', 'true'; programArguments.addAll('--width','1024','--height','768') }
  }
+ mods { chaosranks { sourceSet sourceSets.main } }
 }
-dependencies {
- minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
- annotationProcessor 'org.spongepowered:mixin:0.8.7:processor'
-}
+dependencies { annotationProcessor 'org.spongepowered:mixin:0.8.5:processor' }
 mixin { add sourceSets.main, 'chaosranks.refmap.json'; config 'chaosranks.mixins.json' }
 jar { manifest { attributes('MixinConfigs': 'chaosranks.mixins.json') } }

@@ -1,6 +1,6 @@
 # Chaos Ranks 1.0.1
 
-Mod para Fabric, NeoForge y Forge (Minecraft 1.21.1) que añade etiquetas de rango en pixel art al lado del nombre del jugador. Las etiquetas se ven en el chat, en el Tab y encima de la cabeza.
+Mod para Fabric, NeoForge y Forge (Minecraft 1.20.1) que añade etiquetas de rango en pixel art al lado del nombre del jugador. Las etiquetas se ven en el chat, en el Tab y encima de la cabeza.
 
 Tiene que estar instalado en el servidor **y** en los clientes: el cliente aporta la fuente con los gráficos y la pantalla para escribir el texto.
 
@@ -51,39 +51,28 @@ Las capas no comparten píxeles para que no parpadeen en el mundo 3D. La etiquet
 
 Ojo: si otro mod o plugin mete a los mismos jugadores en otros equipos, chocarán.
 
-## Ports para Minecraft 1.21.1
+## Ports para Minecraft 1.20.1
 
-El código de rangos, guardado, fuentes y menú se comparte en `common`. Las integraciones de cada cargador están en `fabric`, `neoforge` y `forge`.
+Autor: **Goddark83**. Los tres JAR son compatibles con Java 17 y usan el mismo formato de rangos de Chaos Ranks 1.0.1.
 
-- NeoForge: **21.1.257 o posterior de la serie 21.1**, Java 21. Rama `neoforge-1.21.1`.
-- Forge: **52.1.16 o posterior de la serie 52**, Java 21. Rama `forge-1.21.1`.
-- Fabric mantiene su rama `fabric-1.21.1` y requiere Fabric API.
+- Fabric: Loader 0.16 o superior y Fabric API para 1.20.1 (probado con 0.92.6). Rama `fabric-1.20.1`.
+- Forge: serie 47 (probado con 47.4.0). Rama `forge-1.20.1`.
+- NeoForge: 47.1.106 para 1.20.1. Rama `neoforge-1.20.1`.
 
-Instala solamente el JAR del cargador que uses, en cliente y servidor. Forge y NeoForge no requieren Fabric API. No instales varios JAR de ChaosRanks a la vez. Los ports utilizan el mismo formato de `store.json` que la actualización Fabric 1.0.1.
+Instala el JAR correspondiente en servidor y clientes. Forge y NeoForge no requieren Fabric API.
 
-NeoForge usa sus payloads nativos; Forge usa un canal versionado y direcciones de paquete explícitas. Los permisos y las revisiones siguen comprobándose en el servidor. Las clases de cliente se inicializan únicamente en el cliente.
+El editor usa paquetes acotados compatibles con la red de 1.20.1. Forge y NeoForge utilizan sus canales nativos de esa versi�n. Las texturas mantienen sus bordes al cambiar de tama�o mediante un renderizador compatible con 1.20.1.
 
-### Compilar y probar los ports
+### Desarrollo
 
-Desde la raíz, con Java 21 para Forge y NeoForge (Loom 1.18 requiere Java 25 para desarrollar Fabric; el mod sigue compilándose para Java 21):
+Gradle 9.7.1. Java 21 para compilar Forge/NeoForge y Java 25 para ejecutar Loom de Fabric; el bytecode del mod tiene objetivo Java 17.
 
-- NeoForge: `./gradlew -Ploader=neoforge build`.
-- Forge: `./gradlew-forge :forge:build`.
-- Autopruebas: `./gradlew -Ploader=neoforge :neoforge:runSelftest` y `./gradlew-forge :forge:runSelftest`.
-- Menú reducido: reemplaza `runSelftest` por `runSelftestSmall`.
-- En Windows usa los respectivos archivos `.bat`.
+- `gradlew -Ploader=fabric build`
+- `gradlew -Ploader=forge build`
+- `gradlew -Ploader=neoforge build`
 
-ForgeGradle 6 requiere Gradle 8: el lanzador `gradlew-forge` lo selecciona automáticamente. En esta rama Forge el lanzador principal también utiliza Gradle 8.12. La rama NeoForge usa Gradle 9.7.1; para Fabric utiliza su rama correspondiente. Cada cargador se compila por separado; `default_loader` selecciona el predeterminado de la rama.
+En Windows usar `gradlew.bat`. Cada rama selecciona su cargador predeterminado.
+Los JAR finales, remapeados para producci�n, est�n en `<cargador>/build/libs`.
+`gradlew -Ploader=forge :forge:runSelftestSmall` ejecuta las pruebas del juego con un mundo nuevo `selftest` si no existe; cambiar el cargador para las otras variantes. Esta prueba modifica exclusivamente su mundo de desarrollo.
 
-Los JAR quedan en `<cargador>/build/libs/`. Las autopruebas necesitan una copia del mundo `selftest` en `<cargador>/run-1.21.1/saves/`, y modifican ese mundo de prueba.
-
-Los resultados detallados y los límites de las pruebas figuran en `VALIDATION.md`.
-
-## Desarrollo
-
-- `python tools/gen_font.py` regenera las texturas de la fuente y `badge_meta.json` a partir del ASCII art del script. Ahí se añaden letras o iconos.
-- `python tools/gen_gui.py` regenera las texturas del menú (marrón con contorno dorado).
-- `./gradlew build` ejecuta también las pruebas de regresión y genera el jar en `<cargador>/build/libs/`.
-- `./gradlew regressionTest` verifica persistencia, migración, recuperación, validación, renombrado, edición obsoleta, paquetes grandes y geometría del menú.
-- `./gradlew runSelftestSmall` comprueba el menú en una ventana de 1024 × 768 con escala de interfaz 3, incluyendo un clic real en coordenadas escaladas.
-- `./gradlew runSelftest` crea rangos de ejemplo y guarda capturas en `<cargador>/run-1.21.1/screenshots/selftest_*.png`. Necesita el mundo de prueba `<cargador>/run-1.21.1/saves/selftest`.
+Las comprobaciones y limitaciones se documentan en `VALIDATION.md`.

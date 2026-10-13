@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[4,)"
+loaderVersion="[47,)"
 license="MIT"
 [[mods]]
 modId="chaosranks"
@@ -8,17 +8,14 @@ displayName="Chaos Ranks"
 authors="Goddark83"
 description='''Pixel-art rank badges in chat, Tab and nametags, with an in-game editor.'''
 [[dependencies.chaosranks]]
-modId="neoforge"
-type="required"
-versionRange="[21.1.257,21.2)"
+modId="forge"
+mandatory=true
+versionRange="[47.1.106,48)"
 ordering="NONE"
 side="BOTH"
 [[dependencies.chaosranks]]
 modId="minecraft"
-type="required"
-versionRange="[1.21.1,1.21.2)"
+mandatory=true
+versionRange="[1.20.1,1.20.2)"
 ordering="NONE"
 side="BOTH"
-
-[[mixins]]
-config="chaosranks.mixins.json"

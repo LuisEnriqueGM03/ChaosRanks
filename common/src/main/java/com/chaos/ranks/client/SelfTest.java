@@ -21,7 +21,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.level.GameRules;
-import net.minecraft.world.scores.DisplaySlot;
+
 import net.minecraft.world.scores.criteria.ObjectiveCriteria;
 
 /**
@@ -50,7 +50,14 @@ public final class SelfTest {
   // Open the isolated test world after loader initialization, through the normal title-screen flow.
   if (!openingWorld && mc.getSingleplayerServer() == null && mc.screen instanceof net.minecraft.client.gui.screens.TitleScreen) {
    openingWorld = true;
-   mc.createWorldOpenFlows().openWorld("selftest", () -> mc.setScreen(new net.minecraft.client.gui.screens.TitleScreen()));
+   if (java.nio.file.Files.exists(mc.gameDirectory.toPath().resolve("saves/selftest/level.dat"))) {
+    mc.createWorldOpenFlows().loadLevel(new net.minecraft.client.gui.screens.TitleScreen(), "selftest");
+   } else {
+    mc.createWorldOpenFlows().createFreshLevel("selftest",
+     new net.minecraft.world.level.LevelSettings("ChaosRanks selftest", net.minecraft.world.level.GameType.CREATIVE, false, net.minecraft.world.Difficulty.PEACEFUL, true, new GameRules(), net.minecraft.world.level.WorldDataConfiguration.DEFAULT),
+     new net.minecraft.world.level.levelgen.WorldOptions(83L, false, false),
+     registries -> registries.registryOrThrow(net.minecraft.core.registries.Registries.WORLD_PRESET).getOrThrow(net.minecraft.world.level.levelgen.presets.WorldPresets.FLAT).createWorldDimensions());
+   }
   }
   if (openingWorld && mc.screen instanceof net.minecraft.client.gui.screens.BackupConfirmScreen screen) {
    String proceed = Component.translatable("selectWorld.backupQuestion.skipButton").getString();
@@ -78,16 +85,16 @@ public final class SelfTest {
 				var objective = board.getObjective("selftest_tab");
 				if (objective == null) {
 					objective = board.addObjective("selftest_tab", ObjectiveCriteria.DUMMY, Component.literal("Tab"),
-							ObjectiveCriteria.RenderType.INTEGER, true, null);
+							ObjectiveCriteria.RenderType.INTEGER);
 				}
-				board.setDisplayObjective(DisplaySlot.LIST, objective);
+				board.setDisplayObjective(0, objective);
 				server.getPlayerList().op(player(server).getGameProfile());
 			});
 			case 52 -> mc.options.keyPlayerList.setDown(true);
 			case 58 -> shot(mc, "tab");
 			case 59 -> {
 				mc.options.keyPlayerList.setDown(false);
-				server.execute(() -> server.getScoreboard().setDisplayObjective(DisplaySlot.LIST, null));
+				server.execute(() -> server.getScoreboard().setDisplayObjective(0, null));
 			}
 			case 60 -> server.execute(() -> setup(server));
 			case 80 -> mc.player.connection.sendChat("soy OP: rango de OP automatico");

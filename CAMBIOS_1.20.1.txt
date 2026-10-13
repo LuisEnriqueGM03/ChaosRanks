@@ -1,0 +1,6 @@
+Chaos Ranks 1.0.1 para Minecraft 1.20.1
+Autor: Goddark83
+
+Ports de Fabric, Forge y NeoForge. Adaptados red, eventos, chat, interfaz, recursos, mixins y mapeos de producción. Objetivo Java 17. Se conservan rangos, iconos, traducciones, guardado atómico, respaldo y control de revisiones.
+
+Ver VALIDATION.md para resultados de pruebas.

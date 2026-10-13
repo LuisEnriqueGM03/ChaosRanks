@@ -1,31 +1,17 @@
-# Validación de los ports de Chaos Ranks 1.0.1
+# Validación de Chaos Ranks 1.0.1 para Minecraft 1.20.1
 
-Minecraft 1.21.1, Java 21, NeoForge 21.1.257 y Forge 52.1.16.
+Autor: Goddark83. Fabric Loader 0.19.5 / Fabric API 0.92.6, Forge 47.4.0 y NeoForge 47.1.106.
 
-| Comprobación | NeoForge | Forge |
-|---|---|---|
-| Compilación del mod y fuentes | Aprobada | Aprobada |
-| Regresiones de persistencia, validación, revisiones y codecs | 82 comprobaciones | 82 comprobaciones |
-| Chat, Tab, etiquetas y cuatro pestañas | Aprobada | Aprobada |
-| Guardado por red y renombrado | Aprobada | Aprobada |
-| Menú a 342 × 256 unidades y clic escalado | Aprobada | Aprobada |
-| Inicio preliminar del cargador en modo servidor | Aprobado | Aprobado |
+Los tres cargadores se compilan con objetivo Java 17. Se ejecutan 87 comprobaciones por cargador: persistencia, recuperación, migración, revisiones, límites de paquetes, Unicode y escala de interfaz. Se inspeccionan los JAR finales remapeados, metadatos, proveedores de plataforma, refmaps de los cinco mixins, recursos e iconos.
 
-Se revisaron capturas de ambos cargadores y se inspeccionan los JAR con `python tools/validate-ports.py`: identificador, versión, autor, rangos de dependencia, Java 21, proveedor de plataforma, recursos, licencia y ausencia de clases de otros cargadores.
+Las tres autopruebas dentro de Minecraft terminaron correctamente. Usan mundos nuevos de desarrollo; comprueban el guardado por red y renombrado OWNER a JEFE, abren cuatro pestañas del editor, capturan chat, Tab y etiquetas, y verifican un clic real en el botón de negrita en una interfaz de 342 × 256 unidades. Se revisaron capturas de los tres cargadores.
 
-Las pruebas de comportamiento usan un servidor integrado y una copia aislada del mundo `selftest`. El modo servidor preliminar termina al inicializar sus ajustes o en la comprobación de la EULA: no se aceptó ese acuerdo ni se abrió un servidor de juego. No se hizo una sesión con dos clientes independientes en un servidor dedicado.
-
-Forge requiere reunir clases y recursos en un mismo directorio para sus lanzamientos de desarrollo. Se agregó `pack.mcmeta` para recursos y datos de Minecraft 1.21.1 y se fijó la versión mínima de Mixin. Las autopruebas abren el mundo desde la pantalla inicial, después de completar la inicialización del cargador; Quick Play evitaba parte de esa inicialización en el entorno Forge probado.
-
-Las pruebas no muestran errores del mod tras esas correcciones. Permanecen avisos del entorno de desarrollo sobre bibliotecas, sonidos y paquetes de la copia del mundo anterior. No se alteraron los mundos originales.
+No se realizó una sesión con dos clientes independientes en servidor dedicado ni una ejecución separada de los JAR de producción en un lanzador externo. Los refmaps y el remapeo de producción se validan en los archivos publicados. Los mundos originales no se modificaron.
 
 ## Reproducción
 
-- NeoForge: `gradlew -Ploader=neoforge build` y `gradlew -Ploader=neoforge :neoforge:runSelftestSmall`.
-- Forge: `gradlew-forge :forge:build` y `gradlew-forge :forge:runSelftestSmall`.
-- Usar Java 21 y la copia de prueba en `<cargador>/run-1.21.1/saves/selftest`.
-- En Windows usar `.bat`; en otros sistemas dar permiso de ejecución a los lanzadores.
+`gradlew -Ploader=fabric build`, `gradlew -Ploader=forge build` o `gradlew -Ploader=neoforge build`. En Windows usar `.bat`.
 
-Las ramas seleccionan su cargador mediante `default_loader`. El lanzador específico de Forge utiliza Gradle 8.12; NeoForge y Fabric usan Gradle 9.7.1. Los archivos publicados se identifican por cargador, Minecraft y versión del mod.
+Gradle 9.7.1; Java 21 para las herramientas Forge/NeoForge y Java 25 para Loom de Fabric. Bytecode publicado: Java 17.
 
-El adaptador Fabric del módulo compartido también se comprueba con su herramienta Loom 1.18 (Java 25 para ejecutar Gradle, objetivo Java 21). La rama Fabric publicada anteriormente conserva su estructura original.
+Autopruebas: `gradlew -Ploader=forge :forge:runSelftestSmall`; reemplazar ambas referencias al cargador para las otras variantes. Se crea `selftest` si no existe en `<cargador>/run-1.20.1/saves`; solo usar esa carpeta para mundos de prueba. La autoprueba modifica los rangos de ese mundo.

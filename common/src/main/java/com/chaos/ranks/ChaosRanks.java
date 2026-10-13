@@ -10,7 +10,7 @@ public final class ChaosRanks {
  public static final String MOD_ID = "chaosranks";
  public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
  private ChaosRanks() {}
- public static ResourceLocation id(String path) { return ResourceLocation.fromNamespaceAndPath(MOD_ID, path); }
+ public static ResourceLocation id(String path) { return new ResourceLocation(MOD_ID, path); }
  public static void started(MinecraftServer server) { RankStore.load(server); RankTeams.sync(server); }
  public static void joined(ServerPlayer player) { RankTeams.sync(player.server, player); }
 }
