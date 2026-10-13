@@ -4,15 +4,17 @@
     "minecraft": "1.21.1",
     "version": "1.0.1",
     "file": "chaosranks-neoforge-1.21.1-1.0.1.jar",
-    "sha256": "c0b5598092fe76207745588523e365da3e7271fb791a89bec8ed2edeb854a7c9",
-    "branch": "neoforge-1.21.1"
+    "sha256": "6b3f365ef41a1d6e614f0d00999fb2f865180d3bf1a4590d3f410e72833b3f83",
+    "branch": "neoforge-1.21.1",
+    "author": "Goddark83"
   },
   {
     "loader": "forge",
     "minecraft": "1.21.1",
     "version": "1.0.1",
     "file": "chaosranks-forge-1.21.1-1.0.1.jar",
-    "sha256": "ac47cbaab38a443f12bb18e51e92f3d0f0f4765667e4f9ef97058f453b0043fd",
-    "branch": "forge-1.21.1"
+    "sha256": "f903adb95ef92c973e38ccecad65a5ea8c46a1ff5a2e06487db8107cc723e3d8",
+    "branch": "forge-1.21.1",
+    "author": "Goddark83"
   }
 ]

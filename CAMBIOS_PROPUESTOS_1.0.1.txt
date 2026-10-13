@@ -130,3 +130,5 @@ PORTS PARA FORGE Y NEOFORGE — MINECRAFT 1.21.1
 - Instalar solamente el JAR del cargador utilizado, tanto en cliente como en servidor.
 - Estos ports no requieren Fabric API.
 - Resultados de las pruebas y sus límites: VALIDATION.md.
+
+Autor del mod: Goddark83. Actualizado en metadatos, licencia y descripciones de publicación.

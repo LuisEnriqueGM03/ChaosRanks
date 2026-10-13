@@ -5,7 +5,7 @@ license="MIT"
 modId="chaosranks"
 version="${version}"
 displayName="Chaos Ranks"
-authors="Luis Enrique Gil Mayser"
+authors="Goddark83"
 description='''Pixel-art rank badges in chat, Tab and nametags, with an in-game editor.'''
 [[dependencies.chaosranks]]
 modId="forge"
