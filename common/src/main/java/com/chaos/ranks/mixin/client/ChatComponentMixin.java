@@ -1,20 +1,22 @@
 package com.chaos.ranks.mixin.client;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
+import org.spongepowered.asm.mixin.injection.Constant;
+import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import net.minecraft.client.gui.components.ChatComponent;
+import com.chaos.ranks.client.ChatSpacing;
 
-/** Líneas del chat 4 px más altas: las etiquetas miden 11 px y su sombra 1 más, así queda 1 px libre entre una y otra. */
+/** Keep drawing, background, scrolling and click capture on the same row height in 26.1. */
 @Mixin(ChatComponent.class)
 abstract class ChatComponentMixin {
+ @ModifyConstant(method = "extractRenderState(Lnet/minecraft/client/gui/components/ChatComponent$ChatGraphicsAccess;IILnet/minecraft/client/gui/components/ChatComponent$DisplayMode;)V", constant = @Constant(intValue = 9))
+ private int chaosranks$drawingHeight(int vanilla) { return ChatSpacing.ROW_HEIGHT; }
 
-	private static final int EXTRA = 4;
+ // Forge and NeoForge recompile Minecraft: javac folds the row calculation to a double literal.
+ // Fabric keeps Mojang's bytecode, where this literal is absent and the integer local is reused.
+ @ModifyConstant(method = "extractRenderState(Lnet/minecraft/client/gui/components/ChatComponent$ChatGraphicsAccess;IILnet/minecraft/client/gui/components/ChatComponent$DisplayMode;)V", constant = @Constant(doubleValue = 9.0), require = 0)
+ private double chaosranks$recompiledDrawingHeight(double vanilla) { return ChatSpacing.ROW_HEIGHT; }
 
-	@Inject(method = "getLineHeight", at = @At("RETURN"), cancellable = true)
-	private void chaosranks$taller(CallbackInfoReturnable<Integer> cir) {
-		cir.setReturnValue(cir.getReturnValueI() + EXTRA);
-	}
+ @ModifyConstant(method = "getLineHeight", constant = @Constant(doubleValue = 9.0))
+ private double chaosranks$interactionHeight(double vanilla) { return ChatSpacing.ROW_HEIGHT; }
 }

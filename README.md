@@ -1,4 +1,4 @@
-# Chaos Ranks 1.0.1
+# Chaos Ranks 1.0.2
 
 Mod para Fabric, NeoForge y Forge (Minecraft 26.1) que aÃ±ade etiquetas de rango en pixel art al lado del nombre del jugador. Las etiquetas se ven en el chat, en el Tab y encima de la cabeza.
 
@@ -70,3 +70,7 @@ Gradle 9.7.1 y Java 25. `gradlew -Ploader=fabric build`, `gradlew -Ploader=forge
 Los JAR están en `<cargador>/build/libs`. Las autopruebas `:fabric:runSelftestSmall`, `-PselftestSmall :forge:runClient` y `:neoforge:runSelftestSmall` crean mundos de desarrollo y verifican el editor y su guardado por red. Modifican exclusivamente esos mundos.
 
 El resultado y los límites de las pruebas se documentan en VALIDATION.md.
+
+## Corrección del chat en 26.1
+
+La versión 1.0.2 usa filas de 14 píxeles para etiquetas de 11, con 3 píxeles de separación. El dibujo, fondos, desplazamiento y captura de clics comparten la misma altura, respetando el ajuste de espaciado de Minecraft.

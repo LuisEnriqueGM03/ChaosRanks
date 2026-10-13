@@ -1,4 +1,4 @@
-# Validación de Chaos Ranks 1.0.1 para Minecraft 26.1
+# Validación de Chaos Ranks 1.0.2 para Minecraft 26.1
 
 Autor: Goddark83. Java 25. Fabric Loader 0.19.5 / Fabric API 0.145.1, Forge 62.0.9 y NeoForge 26.1.0.19-beta.
 
@@ -17,3 +17,9 @@ Gradle 9.7.1 / Java 25. Compilar con `gradlew -Ploader=fabric build`, `gradlew -
 Fabric y NeoForge: `gradlew -Ploader=fabric :fabric:runSelftestSmall` o `gradlew -Ploader=neoforge :neoforge:runSelftestSmall`. Forge: `gradlew -Ploader=forge -PselftestSmall :forge:runClient`.
 
 Solo usar las carpetas de desarrollo para mundos de prueba: las autopruebas crean y modifican `selftest`. Los JAR finales están en `<cargador>/build/libs`.
+
+La corrección del chat se comprueba dentro del juego: getLineHeight devuelve 14 con espaciado normal, coincidiendo con el dibujo. Se revisan capturas con mensajes consecutivos en los tres cargadores para verificar los 3 píxeles libres entre etiquetas.
+
+En Forge y NeoForge, la recompilación simplifica el cálculo de filas a una constante double; Fabric reutiliza una variable int. El mixin cubre ambas formas. Una prueba de altura de interacción por sí sola no confirma el dibujo: se verifican las capturas reales de cada cargador.
+
+Medición adicional de capturas: `python tools/check-chat-screenshot.py <captura>` verifica el paso de 42 píxeles físicos (14 de interfaz) entre las tres primeras etiquetas rojas consecutivas del escenario de prueba a escala ×3.
