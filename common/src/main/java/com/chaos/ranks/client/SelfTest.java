@@ -20,7 +20,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.decoration.ArmorStand;
-import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.scores.DisplaySlot;
 import net.minecraft.world.scores.criteria.ObjectiveCriteria;
 
@@ -55,7 +55,7 @@ public final class SelfTest {
     mc.createWorldOpenFlows().openWorld("selftest", () -> mc.setScreen(new net.minecraft.client.gui.screens.TitleScreen()));
    } else {
     mc.createWorldOpenFlows().createFreshLevel("selftest",
-     new net.minecraft.world.level.LevelSettings("ChaosRanks selftest", net.minecraft.world.level.GameType.CREATIVE, false, net.minecraft.world.Difficulty.PEACEFUL, true, new GameRules(net.minecraft.world.flag.FeatureFlags.DEFAULT_FLAGS), net.minecraft.world.level.WorldDataConfiguration.DEFAULT),
+     new net.minecraft.world.level.LevelSettings("ChaosRanks selftest", net.minecraft.world.level.GameType.CREATIVE, new net.minecraft.world.level.LevelSettings.DifficultySettings(net.minecraft.world.Difficulty.PEACEFUL,false,false), true, net.minecraft.world.level.WorldDataConfiguration.DEFAULT),
      new net.minecraft.world.level.levelgen.WorldOptions(83L,false,false),
      registries -> registries.lookupOrThrow(net.minecraft.core.registries.Registries.WORLD_PRESET).getOrThrow(net.minecraft.world.level.levelgen.presets.WorldPresets.FLAT).value().createWorldDimensions(), new net.minecraft.client.gui.screens.TitleScreen());
    }
@@ -63,7 +63,7 @@ public final class SelfTest {
   if (openingWorld && mc.screen instanceof net.minecraft.client.gui.screens.BackupConfirmScreen screen) {
    String proceed = Component.translatable("selectWorld.backupQuestion.skipButton").getString();
    screen.children().stream().filter(child -> child instanceof net.minecraft.client.gui.components.Button b && b.getMessage().getString().equals(proceed))
-    .findFirst().ifPresent(child -> ((net.minecraft.client.gui.components.Button) child).onPress());
+    .findFirst().ifPresent(child -> ((net.minecraft.client.gui.components.Button) child).onPress(new net.minecraft.client.input.MouseButtonInfo(0,0)));
   }
   if (mc.player == null && mc.screen != null) {
    String screen = mc.screen.getClass().getName();
@@ -89,7 +89,7 @@ public final class SelfTest {
 							ObjectiveCriteria.RenderType.INTEGER, true, null);
 				}
 				board.setDisplayObjective(DisplaySlot.LIST, objective);
-				server.getPlayerList().op(player(server).getGameProfile());
+				server.getPlayerList().op(new net.minecraft.server.players.NameAndId(player(server).getGameProfile()));
 			});
 			case 52 -> mc.options.keyPlayerList.setDown(true);
 			case 58 -> shot(mc, "tab");
@@ -99,10 +99,10 @@ public final class SelfTest {
 			}
 			case 60 -> server.execute(() -> setup(server));
 			case 80 -> mc.player.connection.sendChat("soy OP: rango de OP automatico");
-			case 84 -> server.execute(() -> server.getPlayerList().deop(player(server).getGameProfile()));
+			case 84 -> server.execute(() -> server.getPlayerList().deop(new net.minecraft.server.players.NameAndId(player(server).getGameProfile())));
 			case 88 -> mc.player.connection.sendChat("sin OP: vuelvo al rango por defecto");
 			case 92 -> server.execute(() -> {
-				server.getPlayerList().op(player(server).getGameProfile());
+				server.getPlayerList().op(new net.minecraft.server.players.NameAndId(player(server).getGameProfile()));
 				RankStore.assign(player(server).getUUID(), "owner");
 				RankTeams.sync(server);
 			});
@@ -126,7 +126,7 @@ public final class SelfTest {
 			case 110 -> shot(mc, "chat");
 			case 115 -> server.execute(() -> RankServer.open(player(server), "jefe"));
    case 117 -> {
-    if (Boolean.getBoolean("chaosranks.selftest.small")) { mc.options.guiScale().set(3); mc.resizeDisplay(); }
+    if (Boolean.getBoolean("chaosranks.selftest.small")) { mc.options.guiScale().set(3); mc.resizeGui(); }
    }
    case 125 -> {
     if (Boolean.getBoolean("chaosranks.selftest.small") && mc.screen instanceof RankManagerScreen screen) {
@@ -134,7 +134,7 @@ public final class SelfTest {
      String off = com.chaos.ranks.Lang.tr("button.bold", com.chaos.ranks.Lang.yesNo(false)).getString();
      var button = screen.children().stream().filter(child -> child instanceof net.minecraft.client.gui.components.Button b && b.getMessage().getString().equals(off)).findFirst().orElseThrow();
      var widget = (net.minecraft.client.gui.components.Button) button;
-     if (!screen.mouseClicked((widget.getX() + widget.getWidth() / 2.0) * scale, (widget.getY() + widget.getHeight() / 2.0) * scale, 0)) throw new AssertionError("Scaled click was not handled");
+     if (!screen.mouseClicked(new net.minecraft.client.input.MouseButtonEvent((widget.getX() + widget.getWidth() / 2.0) * scale, (widget.getY() + widget.getHeight() / 2.0) * scale, new net.minecraft.client.input.MouseButtonInfo(0,0)), false)) throw new AssertionError("Scaled click was not handled");
      String on = com.chaos.ranks.Lang.tr("button.bold", com.chaos.ranks.Lang.yesNo(true)).getString();
      if (screen.children().stream().noneMatch(child -> child instanceof net.minecraft.client.gui.components.Button b && b.getMessage().getString().equals(on))) throw new AssertionError("Scaled click did not toggle bold");
      ChaosRanks.LOGGER.info("[selftest] scaled input PASS at {}x{}, scale={}", screen.width, screen.height, scale);
@@ -189,10 +189,10 @@ public final class SelfTest {
 
 	private static void setup(MinecraftServer server) {
 		ServerPlayer p = player(server);
-		ServerLevel level = p.serverLevel();
-		server.getPlayerList().op(p.getGameProfile());
-		level.getGameRules().getRule(GameRules.RULE_DAYLIGHT).set(false, server);
-		level.setDayTime(6000);
+		ServerLevel level = p.level();
+		server.getPlayerList().op(new net.minecraft.server.players.NameAndId(p.getGameProfile()));
+		level.getGameRules().set(GameRules.ADVANCE_TIME, false, server);
+
 
 		rank("owner", "OWNER", "crown", 0xFF3B3B, 0xFFFFFF, 0x6B0F14, 99);
 		rank("admin", "ADMIN", "shield", 0xB3131B, 0xFFFFFF, null, 90);
@@ -215,7 +215,7 @@ public final class SelfTest {
 		standY = p.getY();
 		standZ = p.getZ() - 5;
 		ArmorStand stand = new ArmorStand(EntityType.ARMOR_STAND, level);
-		stand.moveTo(standX, standY, standZ, 0, 0);
+		stand.setPos(standX, standY, standZ);
 		stand.setCustomName(Component.literal("Steve"));
 		stand.setCustomNameVisible(true);
 		stand.setNoGravity(true);
@@ -239,7 +239,7 @@ public final class SelfTest {
 	}
 
 	private static void shot(Minecraft mc, String name) {
-		Screenshot.grab(mc.gameDirectory, "selftest_" + (Boolean.getBoolean("chaosranks.selftest.small") ? "small_" : "") + name + ".png", mc.getMainRenderTarget(),
+		Screenshot.grab(mc.gameDirectory, "selftest_" + (Boolean.getBoolean("chaosranks.selftest.small") ? "small_" : "") + name + ".png", mc.getMainRenderTarget(), 1,
 				msg -> ChaosRanks.LOGGER.info("[selftest] {}", msg.getString()));
 	}
 }

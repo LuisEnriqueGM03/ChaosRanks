@@ -1,0 +1,29 @@
+[
+  {
+    "loader": "fabric",
+    "minecraft": "26.1",
+    "version": "1.0.1",
+    "author": "Goddark83",
+    "file": "chaosranks-fabric-26.1-1.0.1.jar",
+    "sha256": "164a266bb4599cc27f1ebe39dd8163e375cbf7f45330b651984f63471086a648",
+    "branch": "fabric-26.1"
+  },
+  {
+    "loader": "forge",
+    "minecraft": "26.1",
+    "version": "1.0.1",
+    "author": "Goddark83",
+    "file": "chaosranks-forge-26.1-1.0.1.jar",
+    "sha256": "b61c19ed0b1e3e7c558e8474d2cfcb82303ce481d1ead8cbeed7f58e75ca3678",
+    "branch": "forge-26.1"
+  },
+  {
+    "loader": "neoforge",
+    "minecraft": "26.1",
+    "version": "1.0.1",
+    "author": "Goddark83",
+    "file": "chaosranks-neoforge-26.1-1.0.1.jar",
+    "sha256": "4905d2354aa52f394708dda6a39efc5e37f2033905b739d55185a26dc9cb75e5",
+    "branch": "neoforge-26.1"
+  }
+]

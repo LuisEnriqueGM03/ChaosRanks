@@ -21,13 +21,13 @@ if (-not $Loader) {
 }
 if ($Loader -notin @('fabric', 'neoforge', 'forge')) { throw "Loader debe ser fabric, neoforge o forge" }
 $loaderLabel = @{fabric='Fabric'; neoforge='NeoForge'; forge='Forge'}[$Loader]
-$jar = Get-ChildItem "$root\$Loader\build\libs" -Filter "chaosranks-$Loader-1.21.4-$version.jar" | Select-Object -First 1
+$jar = Get-ChildItem "$root\$Loader\build\libs" -Filter "chaosranks-$Loader-26.1-$version.jar" | Select-Object -First 1
 if (-not $jar) { throw "No existe el JAR de $Loader para $version; compila el cargador elegido" }
 
 # Ids de CurseForge para versión de juego, cargador, Java y entorno.
 $api = "https://minecraft.curseforge.com/api"
 $all = Invoke-RestMethod -Uri "$api/game/versions" -Headers @{ "X-Api-Token" = $token }
-$wanted = "1.21.4", $loaderLabel, "Java 21", "Client", "Server"
+$wanted = "26.1", $loaderLabel, "Java 25", "Client", "Server"
 $ids = foreach ($name in $wanted) {
 	$match = $all | Where-Object { $_.name -eq $name } | Select-Object -First 1
 	if (-not $match) { throw "CurseForge no tiene la versión '$name'" }
@@ -42,7 +42,7 @@ $metadataData = @{
 	# ReadAllText: en PowerShell 5.1, Get-Content -Raw añade propiedades que ConvertTo-Json serializa.
 	changelog     = [IO.File]::ReadAllText("$root\tools\changelog.md", [Text.Encoding]::UTF8)
 	changelogType = "markdown"
-	displayName   = "Chaos Ranks $version - $loaderLabel 1.21.4"
+	displayName   = "Chaos Ranks $version - $loaderLabel 26.1"
 	gameVersions  = @($ids)
 	releaseType   = $ReleaseType
 	relations     = @{ projects = $projectRelations }

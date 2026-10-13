@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.chaos.ranks.rank.RankTeams;
-import com.mojang.authlib.GameProfile;
+import net.minecraft.server.players.NameAndId;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.players.PlayerList;
@@ -22,7 +22,7 @@ abstract class PlayerListMixin {
 	private MinecraftServer server;
 
 	@Inject(method = {"op", "deop"}, at = @At("TAIL"))
-	private void chaosranks$resync(GameProfile profile, CallbackInfo ci) {
+	private void chaosranks$resync(NameAndId profile, CallbackInfo ci) {
 		RankTeams.sync(server);
 	}
 }

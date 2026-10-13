@@ -22,7 +22,7 @@ public final class NeoforgeRanks {
   NeoForge.EVENT_BUS.addListener(this::started);
   NeoForge.EVENT_BUS.addListener(this::joined);
   NeoForge.EVENT_BUS.addListener(this::chat);
-  if (FMLEnvironment.dist == Dist.CLIENT) NeoforgeClient.register();
+  if (FMLEnvironment.getDist() == Dist.CLIENT) NeoforgeClient.register();
  }
  private void payloads(RegisterPayloadHandlersEvent event) {
   var registrar = event.registrar("2").optional();

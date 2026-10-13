@@ -79,7 +79,7 @@ public final class RankStore {
  @Nullable public static RankDef rankOf(ServerPlayer player) {
   RankDef assigned = ranks.get(players.get(player.getUUID()));
   if (assigned != null) return assigned.copy();
-  if (player.server.getPlayerList().isOp(player.getGameProfile())) {
+  if (player.level().getServer().getPlayerList().isOp(new net.minecraft.server.players.NameAndId(player.getGameProfile()))) {
    RankDef op = find(d -> d.opRank); if (op != null) return op.copy();
   }
   RankDef fallback = find(d -> d.defaultRank); return fallback == null ? null : fallback.copy();

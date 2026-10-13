@@ -10,9 +10,9 @@ import net.fabricmc.fabric.api.networking.v1.*;
 import net.fabricmc.fabric.api.message.v1.ServerMessageDecoratorEvent;
 public final class FabricRanks implements ModInitializer {
  public void onInitialize() {
-  PayloadTypeRegistry.playS2C().register(RankPayloads.OpenManager.TYPE, RankPayloads.OpenManager.CODEC);
-  PayloadTypeRegistry.playC2S().register(RankPayloads.Save.TYPE, RankPayloads.Save.CODEC);
-  PayloadTypeRegistry.playC2S().register(RankPayloads.Delete.TYPE, RankPayloads.Delete.CODEC);
+  PayloadTypeRegistry.clientboundPlay().register(RankPayloads.OpenManager.TYPE, RankPayloads.OpenManager.CODEC);
+  PayloadTypeRegistry.serverboundPlay().register(RankPayloads.Save.TYPE, RankPayloads.Save.CODEC);
+  PayloadTypeRegistry.serverboundPlay().register(RankPayloads.Delete.TYPE, RankPayloads.Delete.CODEC);
   ServerPlayNetworking.registerGlobalReceiver(RankPayloads.Save.TYPE, (p,c) -> c.server().execute(() -> RankServer.save(c.player(),p)));
   ServerPlayNetworking.registerGlobalReceiver(RankPayloads.Delete.TYPE, (p,c) -> c.server().execute(() -> RankServer.delete(c.player(),p)));
   CommandRegistrationCallback.EVENT.register((d,r,e) -> RankCommand.register(d));

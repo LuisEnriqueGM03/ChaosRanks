@@ -15,13 +15,15 @@ import com.chaos.ranks.rank.RankDef;
 import com.chaos.ranks.server.RankChat;
 
 import com.chaos.ranks.platform.Services;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 
 /**
@@ -47,9 +49,9 @@ public class RankManagerScreen extends Screen {
 		}
 	}
 
-	private static final ResourceLocation PANEL = ChaosRanks.id("panel");
-	private static final ResourceLocation INSET = ChaosRanks.id("inset");
-	private static final ResourceLocation CELL = ChaosRanks.id("cell");
+	private static final Identifier PANEL = ChaosRanks.id("panel");
+	private static final Identifier INSET = ChaosRanks.id("inset");
+	private static final Identifier CELL = ChaosRanks.id("cell");
 
 	private static final int W = 420;
 	private static final int H = 236;
@@ -79,9 +81,9 @@ public class RankManagerScreen extends Screen {
 	private static final int INK = 0xFF0C0704;
 	private static final int ROW_SELECTED = 0xFF5A3A14;
 	private static final int ROW_HOVER = 0xFF3A2410;
-	private static final int LABEL = 0xE8C77A;
-	private static final int HINT = 0x9A8466;
-	private static final int FIELD_TEXT = 0xFFEBC0;
+	private static final int LABEL = 0xFFE8C77A;
+	private static final int HINT = 0xFF9A8466;
+	private static final int FIELD_TEXT = 0xFFFFEBC0;
 
 	private List<RankDef> ranks;
  private long revision;
@@ -100,7 +102,7 @@ public class RankManagerScreen extends Screen {
 	private final List<int[]> fields = new ArrayList<>();
 
 	public RankManagerScreen(List<RankDef> ranks, String selectId, long revision) {
-		super(Lang.tr("screen.title"));
+		super(Minecraft.getInstance(), Minecraft.getInstance().font, Lang.tr("screen.title"));
   this.revision = revision;
 		this.ranks = ranks;
 		select(selectId);
@@ -336,9 +338,10 @@ public class RankManagerScreen extends Screen {
 	// Ratón
 
 	@Override
-	public boolean mouseClicked(double mouseX, double mouseY, int button) {
+	public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+  double mouseX = event.x(), mouseY = event.y(); int button = event.button();
   mouseX /= uiScale; mouseY /= uiScale;
-		if (super.mouseClicked(mouseX, mouseY, button)) {
+		if (super.mouseClicked(new MouseButtonEvent(mouseX,mouseY,event.buttonInfo()),doubleClick)) {
 			return true;
 		}
 		int mx = (int) mouseX - left();
@@ -396,8 +399,8 @@ public class RankManagerScreen extends Screen {
 
  private int maxListScroll() { return Math.max(0, ranks.size() * ROW_H - (LIST_BOTTOM - TOP - 4)); }
  @Override public void mouseMoved(double x, double y) { super.mouseMoved(x / uiScale, y / uiScale); }
- @Override public boolean mouseReleased(double x, double y, int button) { return super.mouseReleased(x / uiScale, y / uiScale, button); }
- @Override public boolean mouseDragged(double x, double y, int button, double dx, double dy) { return super.mouseDragged(x / uiScale, y / uiScale, button, dx / uiScale, dy / uiScale); }
+ @Override public boolean mouseReleased(MouseButtonEvent event) { return super.mouseReleased(new MouseButtonEvent(event.x()/uiScale,event.y()/uiScale,event.buttonInfo())); }
+ @Override public boolean mouseDragged(MouseButtonEvent event, double dx, double dy) { return super.mouseDragged(new MouseButtonEvent(event.x()/uiScale,event.y()/uiScale,event.buttonInfo()),dx/uiScale,dy/uiScale); }
 
 	private int maxIconScroll() {
 		int rows = (BadgeMeta.icons().size() + ICON_COLS - 1) / ICON_COLS;
@@ -435,27 +438,30 @@ public class RankManagerScreen extends Screen {
 	// Dibujo
 
 	@Override
-	public void renderBackground(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+	public void extractBackground(GuiGraphicsExtractor g, int mouseX, int mouseY, float partialTick) {}
+
+ private void renderPanel(GuiGraphicsExtractor g) {
 
 		int x = left();
 		int y = top();
-		g.blitSprite(net.minecraft.client.renderer.RenderType::guiTextured, PANEL, x, y, W, H);
-		g.blitSprite(net.minecraft.client.renderer.RenderType::guiTextured, INSET, x + PAD, y + TOP, LIST_W, LIST_BOTTOM - TOP);
-		g.blitSprite(net.minecraft.client.renderer.RenderType::guiTextured, INSET, x + RX, y + TOP, RW, PREVIEW_BOTTOM - TOP);
+		g.blitSprite(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, PANEL, x, y, W, H);
+		g.blitSprite(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, INSET, x + PAD, y + TOP, LIST_W, LIST_BOTTOM - TOP);
+		g.blitSprite(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, INSET, x + RX, y + TOP, RW, PREVIEW_BOTTOM - TOP);
 		// Línea dorada bajo el título.
 		g.fill(x + PAD, y + 22, x + W - PAD, y + 23, 0xFF8A5A12);
 		for (int[] f : fields) {
-			g.blitSprite(net.minecraft.client.renderer.RenderType::guiTextured, INSET, f[0], f[1], f[2], f[3]);
+			g.blitSprite(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, INSET, f[0], f[1], f[2], f[3]);
 		}
 	}
 
 	@Override
-	public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
-  super.renderBackground(g, mouseX, mouseY, partialTick);
-  g.pose().pushPose();
-  g.pose().scale((float) uiScale, (float) uiScale, 1);
+	public void extractRenderState(GuiGraphicsExtractor g, int mouseX, int mouseY, float partialTick) {
+
+  g.pose().pushMatrix();
+  g.pose().scale((float) uiScale, (float) uiScale);
   mouseX = (int) (mouseX / uiScale); mouseY = (int) (mouseY / uiScale);
-		super.render(g, mouseX, mouseY, partialTick);
+		renderPanel(g);
+		super.extractRenderState(g, mouseX, mouseY, partialTick);
 		int x = left();
 		int y = top();
 		int mx = mouseX - x;
@@ -470,18 +476,18 @@ public class RankManagerScreen extends Screen {
 			case ICON -> renderIconTab(g, x, y, mx, my, mouseX, mouseY);
 			case COLORS -> {
 				renderSwatches(g, x, y, get(colorTarget), mx, my, mouseX, mouseY);
-				g.drawString(font, Lang.tr("screen.hex"), x + RX + RW - 100, y + CONTENT_Y + 71, LABEL, false);
+				g.text(font, Lang.tr("screen.hex"), x + RX + RW - 100, y + CONTENT_Y + 71, LABEL, false);
 			}
 			case CHAT -> {
-				g.drawString(font, Lang.tr("screen.separator"), x + RX, y + CONTENT_Y + 5, LABEL, false);
-				g.drawString(font, Lang.tr("screen.hex"), x + RX + RW - 100, y + CONTENT_Y + 91, LABEL, false);
+				g.text(font, Lang.tr("screen.separator"), x + RX, y + CONTENT_Y + 5, LABEL, false);
+				g.text(font, Lang.tr("screen.hex"), x + RX + RW - 100, y + CONTENT_Y + 91, LABEL, false);
 				renderSwatches(g, x, y, get(chatTarget), mx, my, mouseX, mouseY);
 			}
 		}
-  g.pose().popPose();
+  g.pose().popMatrix();
 	}
 
-	private void renderTitle(GuiGraphics g, int x, int y) {
+	private void renderTitle(GuiGraphicsExtractor g, int x, int y) {
 		RankDef title = new RankDef();
 		title.label = "CHAOS RANKS";
 		title.icon = "crown";
@@ -489,17 +495,17 @@ public class RankManagerScreen extends Screen {
 		title.frameColor = 0x5A3A08;
 		title.textColor = 0x2A1606;
 		title.iconColor = 0x2A1606;
-		g.drawString(font, BadgeRenderer.build(title), x + PAD + 1, y + 10, 0xFFFFFF, false);
+		g.text(font, BadgeRenderer.build(title), x + PAD + 1, y + 10, 0xFFFFFFFF, false);
 		Component editing = originalId == null ? Lang.tr("screen.new_rank") : Lang.tr("screen.editing", originalId);
-		g.drawString(font, editing, x + W - PAD - 2 - font.width(editing), y + 10, LABEL, false);
+		g.text(font, editing, x + W - PAD - 2 - font.width(editing), y + 10, LABEL, false);
 	}
 
  // Minecraft 1.21.4 applies the current pose to scissor bounds.
- private void scissor(GuiGraphics g, int left, int top, int right, int bottom) {
+ private void scissor(GuiGraphicsExtractor g, int left, int top, int right, int bottom) {
   g.enableScissor(left, top, right, bottom);
  }
 
-	private void renderList(GuiGraphics g, int x, int y, int mx, int my) {
+	private void renderList(GuiGraphicsExtractor g, int x, int y, int mx, int my) {
 		int top = y + TOP + 2;
 		int bottom = y + LIST_BOTTOM - 2;
 		scissor(g, x + PAD + 2, top, x + PAD + LIST_W - 2, bottom);
@@ -514,23 +520,23 @@ public class RankManagerScreen extends Screen {
 			} else if (hovered) {
 				g.fill(x + PAD + 2, ry, x + PAD + LIST_W - 2, ry + ROW_H, ROW_HOVER);
 			}
-			g.drawString(font, BadgeRenderer.build(def), x + PAD + 7, ry + 4, 0xFFFFFF, true);
+			g.text(font, BadgeRenderer.build(def), x + PAD + 7, ry + 4, 0xFFFFFFFF, true);
 		}
 		g.disableScissor();
 		if (ranks.isEmpty()) {
-			g.drawCenteredString(font, Lang.tr("screen.empty"), x + PAD + LIST_W / 2, top + 8, HINT);
+			g.centeredText(font, Lang.tr("screen.empty"), x + PAD + LIST_W / 2, top + 8, HINT);
 		}
 	}
 
-	private void renderPreview(GuiGraphics g, int x, int y) {
+	private void renderPreview(GuiGraphicsExtractor g, int x, int y) {
 		MutableComponent badge = BadgeRenderer.build(draft);
 		int bw = font.width(badge);
-		g.pose().pushPose();
+		g.pose().pushMatrix();
 		float previewScale = Math.min(2f, (RW - 16f) / Math.max(1, bw));
-  g.pose().translate(x + RX + (RW - bw * previewScale) / 2f, y + TOP + 10, 0);
-  g.pose().scale(previewScale, previewScale, 1);
-		g.drawString(font, badge, 0, 0, 0xFFFFFF, true);
-		g.pose().popPose();
+  g.pose().translate(x + RX + (RW - bw * previewScale) / 2f, y + TOP + 10);
+  g.pose().scale(previewScale, previewScale);
+		g.text(font, badge, 0, 0, 0xFFFFFFFF, true);
+		g.pose().popMatrix();
 
 		String name = minecraft != null && minecraft.player != null ? minecraft.player.getScoreboardName() : "Steve";
 		Component chat = Component.empty().append(BadgeRenderer.build(draft)).append(" ")
@@ -539,26 +545,26 @@ public class RankManagerScreen extends Screen {
 				.append(RankChat.format(draft.separator, draft.separatorColor, draft.messageColor,
 						Lang.tr("screen.sample_message")));
   scissor(g, x + RX + 4, y + TOP + 2, x + RX + RW - 4, y + PREVIEW_BOTTOM - 2);
-		g.drawString(font, chat, x + RX + 8, y + PREVIEW_BOTTOM - 14, 0xFFFFFF, true);
+		g.text(font, chat, x + RX + 8, y + PREVIEW_BOTTOM - 14, 0xFFFFFFFF, true);
   g.disableScissor();
 	}
 
-	private void renderLabelTab(GuiGraphics g, int x, int y) {
-		g.drawString(font, Lang.tr("screen.text"), x, y + 5, LABEL, false);
-		g.drawString(font, Lang.tr("screen.priority"), x, y + 53, LABEL, false);
-		g.drawString(font, String.valueOf(draft.priority), x + 60, y + 53, 0xFFFFFF, true);
-		g.drawString(font, Lang.tr("screen.hint.priority"), x, y + 71, HINT, false);
-		g.drawString(font, Lang.tr("screen.hint.default"), x, y + 80, HINT, false);
-		g.drawString(font, Lang.tr("screen.hint.op"), x, y + 89, HINT, false);
+	private void renderLabelTab(GuiGraphicsExtractor g, int x, int y) {
+		g.text(font, Lang.tr("screen.text"), x, y + 5, LABEL, false);
+		g.text(font, Lang.tr("screen.priority"), x, y + 53, LABEL, false);
+		g.text(font, String.valueOf(draft.priority), x + 60, y + 53, 0xFFFFFFFF, true);
+		g.text(font, Lang.tr("screen.hint.priority"), x, y + 71, HINT, false);
+		g.text(font, Lang.tr("screen.hint.default"), x, y + 80, HINT, false);
+		g.text(font, Lang.tr("screen.hint.op"), x, y + 89, HINT, false);
 	}
 
-	private void renderIconTab(GuiGraphics g, int x, int y, int mx, int my, int mouseX, int mouseY) {
+	private void renderIconTab(GuiGraphicsExtractor g, int x, int y, int mx, int my, int mouseX, int mouseY) {
 		List<BadgeMeta.Icon> icons = BadgeMeta.icons();
 		BadgeMeta.Icon current = BadgeMeta.icon(draft.icon);
-		g.drawString(font, current == null ? Lang.tr("button.no_icon") : Lang.tr("screen.icon", current.id()),
+		g.text(font, current == null ? Lang.tr("button.no_icon") : Lang.tr("screen.icon", current.id()),
 				x + RX + 78, y + CONTENT_Y + 4, LABEL, false);
 		Component page = Component.literal((iconScroll + 1) + "/" + (maxIconScroll() + 1) + "  ").append(Lang.tr("screen.scroll"));
-		g.drawString(font, page, x + RX + RW - font.width(page), y + CONTENT_Y + 4, HINT, false);
+		g.text(font, page, x + RX + RW - font.width(page), y + CONTENT_Y + 4, HINT, false);
 
 		int hovered = iconAt(mx, my);
 		for (int r = 0; r < ICON_ROWS; r++) {
@@ -575,24 +581,24 @@ public class RankManagerScreen extends Screen {
 					g.fill(cx - 1, cy - 1, cx + ICON_CELL - 1, cy + ICON_CELL - 1, GOLD_LIGHT);
 					g.fill(cx, cy, cx + ICON_CELL - 2, cy + ICON_CELL - 2, 0xFF000000 | draft.bgColor);
 				} else {
-					g.blitSprite(net.minecraft.client.renderer.RenderType::guiTextured, CELL, cx, cy, ICON_CELL - 2, ICON_CELL - 2);
+					g.blitSprite(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, CELL, cx, cy, ICON_CELL - 2, ICON_CELL - 2);
 					if (index == hovered) {
 						g.fill(cx + 1, cy + 1, cx + ICON_CELL - 3, cy + ICON_CELL - 3, 0x40FFE08A);
 					}
 				}
-				g.pose().pushPose();
-				g.pose().translate(cx + 1, cy + 1, 0);
-				g.pose().scale(2, 2, 1);
-				g.drawString(font, BadgeRenderer.icon(icon, selected ? draft.iconColor : 0xFFEBC0), 0, 0, 0xFFFFFF, false);
-				g.pose().popPose();
+				g.pose().pushMatrix();
+				g.pose().translate(cx + 1, cy + 1);
+				g.pose().scale(2, 2);
+				g.text(font, BadgeRenderer.icon(icon, selected ? draft.iconColor : 0xFFEBC0), 0, 0, 0xFFFFFFFF, false);
+				g.pose().popMatrix();
 			}
 		}
 		if (hovered >= 0) {
-			g.renderTooltip(font, Component.literal(icons.get(hovered).id()), mouseX, mouseY);
+			g.setTooltipForNextFrame(font, Component.literal(icons.get(hovered).id()), mouseX, mouseY);
 		}
 	}
 
-	private void renderSwatches(GuiGraphics g, int x, int y, @Nullable Integer current, int mx, int my,
+	private void renderSwatches(GuiGraphicsExtractor g, int x, int y, @Nullable Integer current, int mx, int my,
 			int mouseX, int mouseY) {
 		int top = swatchTop();
 		int hovered = swatchAt(mx, my, top);
@@ -614,7 +620,7 @@ public class RankManagerScreen extends Screen {
 		}
 		if (hovered >= 0) {
 			Palette.Color c = Palette.COLORS.get(hovered);
-			g.renderTooltip(font, c.name().copy().append(String.format("  #%06X", c.rgb())), mouseX, mouseY);
+			g.setTooltipForNextFrame(font, c.name().copy().append(String.format("  #%06X", c.rgb())), mouseX, mouseY);
 		}
 	}
 

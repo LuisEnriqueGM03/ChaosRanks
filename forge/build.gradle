@@ -1,35 +1,14 @@
-plugins {
- id 'net.minecraftforge.gradle' version '6.0.54'
- id 'org.spongepowered.mixin' version '0.7-SNAPSHOT'
-}
+plugins { id 'net.minecraftforge.gradle' version '7.0.34' }
 apply from: rootProject.file('gradle/loader.gradle')
-// Forge 52 development launches require one directory for classes and mod resources.
-sourceSets.main.output.resourcesDir = sourceSets.main.java.destinationDirectory.get().asFile
-tasks.named('processResources') { destinationDir = sourceSets.main.java.destinationDirectory.get().asFile }
 minecraft {
- mappings channel: 'official', version: minecraft_version
  runs {
-  configureEach {
-   workingDirectory file('run-1.21.4')
-   mods { chaosranks { source sourceSets.main } }
-  }
-  client { }
-  server { args '--nogui' }
-  serverSmoke { parent runs.server; workingDirectory file('run-server-smoke'); args '--initSettings' }
-  selftest {
-   parent runs.client
-   property 'chaosranks.selftest', 'true'
-  }
-  selftestSmall {
-   parent runs.client
-   property 'chaosranks.selftest', 'true'; property 'chaosranks.selftest.small', 'true'
-   args '--width', '1024', '--height', '768'
-  }
+  configureEach { workingDir = layout.projectDirectory.dir('run-26.1'); args '--mixin.config', 'chaosranks.mixins.json' }
+  register('client') { if (project.hasProperty('selftest')) systemProperty 'chaosranks.selftest','true'; if (project.hasProperty('selftestSmall')) { systemProperty 'chaosranks.selftest','true'; systemProperty 'chaosranks.selftest.small','true'; args '--width','1024','--height','768' } }
+  register('server') { args '--nogui' }
  }
 }
-dependencies {
- minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
- annotationProcessor 'org.spongepowered:mixin:0.8.7:processor'
-}
-mixin { add sourceSets.main, 'chaosranks.refmap.json'; config 'chaosranks.mixins.json' }
-jar { manifest { attributes('MixinConfigs': 'chaosranks.mixins.json') } }
+repositories { minecraft.mavenizer(it); maven fg.forgeMaven; maven fg.minecraftLibsMaven; mavenCentral() }
+dependencies { implementation minecraft.dependency("net.minecraftforge:forge:${minecraft_version}-${forge_version}") }
+jar { manifest { attributes('MixinConfigs':'chaosranks.mixins.json') } }
+
+processResources { filesMatching('chaosranks.mixins.json') { filter { line -> line.replace('JAVA_25','JAVA_21') } } }

@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[54,)"
+loaderVersion="[62,)"
 license="MIT"
 [[mods]]
 modId="chaosranks"
@@ -10,12 +10,12 @@ description='''Pixel-art rank badges in chat, Tab and nametags, with an in-game 
 [[dependencies.chaosranks]]
 modId="forge"
 mandatory=true
-versionRange="[54.1.14,55)"
+versionRange="[62.0.9,63)"
 ordering="NONE"
 side="BOTH"
 [[dependencies.chaosranks]]
 modId="minecraft"
 mandatory=true
-versionRange="[1.21.4,1.21.5)"
+versionRange="[26.1,26.1.1)"
 ordering="NONE"
 side="BOTH"

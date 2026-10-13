@@ -6,7 +6,7 @@ import com.chaos.ranks.rank.RankDef;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 /**
  * Monta la etiqueta como texto con la fuente chaosranks:badge, en tres capas que se dibujan una encima de otra
@@ -16,9 +16,9 @@ import net.minecraft.resources.ResourceLocation;
  */
 public final class BadgeRenderer {
 
-	public static final ResourceLocation FONT = ChaosRanks.id("badge");
+	public static final net.minecraft.network.chat.FontDescription FONT = new net.minecraft.network.chat.FontDescription.Resource(ChaosRanks.id("badge"));
 	/** Misma fuente (mismos codepoints y anchos) en 9 px de alto, para el Tab. */
-	public static final ResourceLocation FONT_COMPACT = ChaosRanks.id("badge_compact");
+	public static final net.minecraft.network.chat.FontDescription FONT_COMPACT = new net.minecraft.network.chat.FontDescription.Resource(ChaosRanks.id("badge_compact"));
 
 	// Codepoints de assets/chaosranks/font/badge.json (ver tools/gen_font.py).
 	private static final int RING_FILL = 0xE000;
@@ -137,7 +137,7 @@ public final class BadgeRenderer {
 	}
 
 	private static MutableComponent seg(CharSequence text, int color) {
-		return Component.literal(text.toString()).setStyle(Style.EMPTY.withFont(FONT).withColor(color).withItalic(false));
+		return Component.literal(text.toString()).setStyle(Style.EMPTY.withFont(FONT).withColor(color).withItalic(false).withShadowColor(0));
 	}
 
 	/** Relleno de {@code width} píxeles con piezas de 1..32; cada pieza avanza un píxel de más y se compensa. */

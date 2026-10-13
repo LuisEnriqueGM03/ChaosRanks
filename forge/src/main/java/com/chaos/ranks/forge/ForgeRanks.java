@@ -15,10 +15,10 @@ import net.minecraft.server.level.ServerPlayer;
 public final class ForgeRanks {
  public ForgeRanks() {
   ForgeNetwork.register();
-  MinecraftForge.EVENT_BUS.addListener(this::commands);
-  MinecraftForge.EVENT_BUS.addListener(this::started);
-  MinecraftForge.EVENT_BUS.addListener(this::joined);
-  MinecraftForge.EVENT_BUS.addListener(this::chat);
+  RegisterCommandsEvent.BUS.addListener(this::commands);
+  ServerStartedEvent.BUS.addListener(this::started);
+  PlayerEvent.PlayerLoggedInEvent.BUS.addListener(this::joined);
+  ServerChatEvent.BUS.addListener(this::chat);
   if (FMLEnvironment.dist == Dist.CLIENT) ForgeClient.register();
  }
  private void commands(RegisterCommandsEvent event) { RankCommand.register(event.getDispatcher()); }

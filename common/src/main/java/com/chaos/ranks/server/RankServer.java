@@ -23,7 +23,7 @@ public final class RankServer {
 
 
 	public static void open(ServerPlayer player, String selectId) {
-  if (!player.hasPermissions(PERMISSION)) return;
+  if (!player.permissions().hasPermission(net.minecraft.server.permissions.Permissions.COMMANDS_GAMEMASTER)) return;
   if (!RankStore.writable()) { error(player, "msg.storage_error"); return; }
 		if (!Services.PLATFORM.canSend(player)) {
 			player.sendSystemMessage(Lang.tr("msg.need_client")
@@ -38,7 +38,7 @@ public final class RankServer {
 	}
 
 	public static void save(ServerPlayer player, RankPayloads.Save payload) {
-		if (!player.hasPermissions(PERMISSION)) {
+		if (!player.permissions().hasPermission(net.minecraft.server.permissions.Permissions.COMMANDS_GAMEMASTER)) {
 			return;
 		}
 		if (!checkRevision(player, payload.revision())) return;
@@ -61,7 +61,7 @@ public final class RankServer {
 		def.id = RankStore.freeId(def.label.isEmpty() ? def.icon : def.label, original);
 		try { RankStore.put(original, def); }
   catch (RankStore.StorageException e) { ChaosRanks.LOGGER.error("Rank save failed", e); error(player, "msg.storage_error"); return; }
-		RankTeams.sync(player.server);
+		RankTeams.sync(player.level().getServer());
 		open(player, def.id);
 	}
 
@@ -74,12 +74,12 @@ public final class RankServer {
 
 	public static void delete(ServerPlayer player, RankPayloads.Delete payload) {
   String id = payload.id();
-		if (!player.hasPermissions(PERMISSION) || !checkRevision(player, payload.revision()) || RankStore.get(id) == null) {
+		if (!player.permissions().hasPermission(net.minecraft.server.permissions.Permissions.COMMANDS_GAMEMASTER) || !checkRevision(player, payload.revision()) || RankStore.get(id) == null) {
 			return;
 		}
 		try { RankStore.delete(id); }
   catch (RankStore.StorageException e) { ChaosRanks.LOGGER.error("Rank delete failed", e); error(player, "msg.storage_error"); return; }
-		RankTeams.sync(player.server);
+		RankTeams.sync(player.level().getServer());
 		open(player, "");
 	}
 }

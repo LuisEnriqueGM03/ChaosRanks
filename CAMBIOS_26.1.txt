@@ -1,0 +1,7 @@
+Chaos Ranks 1.0.1 para Minecraft 26.1
+Autor: Goddark83
+Requiere Java 25.
+
+Ports de Fabric, Forge y NeoForge. Adaptados dibujo del menú, colores opacos, fuentes, eventos de ratón, permisos y eventos de los cargadores. Recursos formato 84. Se conservan los rangos, iconos y traducciones, guardado atómico, respaldos y control de revisiones.
+
+Ver VALIDATION.md para las pruebas.

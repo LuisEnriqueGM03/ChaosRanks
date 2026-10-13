@@ -40,7 +40,7 @@ public final class RankCommand {
 
 	public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
 		dispatcher.register(Commands.literal("rank")
-				.requires(source -> source.hasPermission(2))
+				.requires(source -> source.permissions().hasPermission(net.minecraft.server.permissions.Permissions.COMMANDS_GAMEMASTER))
 				.executes(ctx -> {
 					RankServer.open(ctx.getSource().getPlayerOrException(), "");
 					return 1;
