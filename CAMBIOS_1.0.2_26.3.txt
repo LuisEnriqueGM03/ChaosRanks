@@ -1,0 +1,13 @@
+Chaos Ranks 1.0.2 para Minecraft 26.3
+Autor: Goddark83. Requiere Java 25.
+
+Ports Fabric, Forge y NeoForge. Dependencias actualizadas para 26.3.
+Paquete conjunto compatible con recursos 97.1 y datos 121.0.
+Autoprueba adaptada al identificador del boton izquierdo en 26.3.
+Chat con filas de 14 pixeles, etiquetas de 11 y separacion de 3.
+Se conservan almacenamiento atomico, recuperacion, migracion y 144 iconos.
+
+Los tres compilan y pasan 82 comprobaciones y la inspeccion de sus JAR.
+Fabric pasa ademas chat visual, espaciado personalizado, editor escalado y cambios por red dentro del juego.
+Forge y NeoForge se publican como beta: sus pruebas dentro del juego quedan pendientes por un bloqueo nativo en la biblioteca grafica AMD durante el arranque.
+Ver VALIDATION.md para resultados y limites.

@@ -3,15 +3,15 @@ apply from: rootProject.file('gradle/loader.gradle')
 neoForge {
  version = neoforge_version
  runs {
-  client { client(); gameDirectory = file('run-26.2') }
-  server { server(); gameDirectory = file('run-26.2'); programArgument '--nogui' }
+  client { client(); gameDirectory = file('run-26.3') }
+  server { server(); gameDirectory = file('run-26.3'); programArgument '--nogui' }
   serverSmoke { server(); gameDirectory = file('run-server-smoke'); programArgument '--initSettings' }
   selftest {
-   client(); gameDirectory = file('run-26.2')
+   client(); gameDirectory = file('run-26.3')
    systemProperty 'chaosranks.selftest', 'true'
   }
   selftestSmall {
-   client(); gameDirectory = file('run-26.2')
+   client(); gameDirectory = file('run-26.3')
    systemProperty 'chaosranks.selftest', 'true'; systemProperty 'chaosranks.selftest.small', 'true'
    programArguments.addAll('--width', '1024', '--height', '768')
   }

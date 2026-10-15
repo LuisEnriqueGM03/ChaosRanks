@@ -7,7 +7,7 @@ dependencies {
 }
 loom {
  runs {
-  selftestSmall { client(); runDir '../run-26.2-small'; vmArg '-Dchaosranks.selftest=true'; vmArg '-Dchaosranks.selftest.small=true'; programArgs '--width', '1024', '--height', '768' }
-  selftest { client(); runDir '../run-26.2'; vmArg '-Dchaosranks.selftest=true' }
+  selftestSmall { client(); runDir '../run-26.3-small'; vmArg '-Dchaosranks.selftest=true'; vmArg '-Dchaosranks.selftest.small=true'; programArgs '--width', '1024', '--height', '768' }
+  selftest { client(); runDir '../run-26.3'; vmArg '-Dchaosranks.selftest=true' }
  }
 }

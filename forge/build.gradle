@@ -2,7 +2,7 @@ plugins { id 'net.minecraftforge.gradle' version '7.0.34' }
 apply from: rootProject.file('gradle/loader.gradle')
 minecraft {
  runs {
-  configureEach { workingDir = layout.projectDirectory.dir('run-26.2'); args '--mixin.config', 'chaosranks.mixins.json' }
+  configureEach { workingDir = layout.projectDirectory.dir('run-26.3'); args '--mixin.config', 'chaosranks.mixins.json' }
   register('client') { if (project.hasProperty('selftest')) systemProperty 'chaosranks.selftest','true'; if (project.hasProperty('selftestSmall')) { systemProperty 'chaosranks.selftest','true'; systemProperty 'chaosranks.selftest.small','true'; args '--width','1024','--height','768' } }
   register('server') { args '--nogui' }
  }

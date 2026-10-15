@@ -63,7 +63,7 @@ public final class SelfTest {
   if (openingWorld && mc.gui.screen() instanceof net.minecraft.client.gui.screens.BackupConfirmScreen screen) {
    String proceed = Component.translatable("selectWorld.backupQuestion.skipButton").getString();
    screen.children().stream().filter(child -> child instanceof net.minecraft.client.gui.components.Button b && b.getMessage().getString().equals(proceed))
-    .findFirst().ifPresent(child -> ((net.minecraft.client.gui.components.Button) child).onPress(new net.minecraft.client.input.MouseButtonInfo(0,0)));
+    .findFirst().ifPresent(child -> ((net.minecraft.client.gui.components.Button) child).onPress(new net.minecraft.client.input.MouseButtonInfo(1,0)));
   }
   if (mc.player == null && mc.gui.screen() != null) {
    String screen = mc.gui.screen().getClass().getName();
@@ -154,7 +154,7 @@ public final class SelfTest {
      String off = com.chaos.ranks.Lang.tr("button.bold", com.chaos.ranks.Lang.yesNo(false)).getString();
      var button = screen.children().stream().filter(child -> child instanceof net.minecraft.client.gui.components.Button b && b.getMessage().getString().equals(off)).findFirst().orElseThrow();
      var widget = (net.minecraft.client.gui.components.Button) button;
-     if (!screen.mouseClicked(new net.minecraft.client.input.MouseButtonEvent((widget.getX() + widget.getWidth() / 2.0) * scale, (widget.getY() + widget.getHeight() / 2.0) * scale, new net.minecraft.client.input.MouseButtonInfo(0,0)), false)) throw new AssertionError("Scaled click was not handled");
+     if (!screen.mouseClicked(new net.minecraft.client.input.MouseButtonEvent((widget.getX() + widget.getWidth() / 2.0) * scale, (widget.getY() + widget.getHeight() / 2.0) * scale, new net.minecraft.client.input.MouseButtonInfo(1,0)), false)) throw new AssertionError("Scaled click was not handled");
      String on = com.chaos.ranks.Lang.tr("button.bold", com.chaos.ranks.Lang.yesNo(true)).getString();
      if (screen.children().stream().noneMatch(child -> child instanceof net.minecraft.client.gui.components.Button b && b.getMessage().getString().equals(on))) throw new AssertionError("Scaled click did not toggle bold");
      ChaosRanks.LOGGER.info("[selftest] scaled input PASS at {}x{}, scale={}", screen.width, screen.height, scale);

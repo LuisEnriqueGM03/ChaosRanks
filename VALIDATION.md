@@ -1,29 +1,32 @@
-# Validación de Chaos Ranks 1.0.2 para Minecraft 26.2
+# ValidaciÃ³n de Chaos Ranks 1.0.2 para Minecraft 26.3
 
-Autor: Goddark83. Java 25. Fabric Loader 0.19.5 / Fabric API 0.161.0, Forge 65.1.3 y NeoForge 26.2.0.90.
+Autor: Goddark83. Java 25. Fabric Loader 0.19.5 / Fabric API 0.162.0+26.3, Forge 66.0.10 y NeoForge 26.3.0.76.
 
-Cada cargador ejecuta 82 comprobaciones de persistencia, recuperación, migración, revisiones, paquetes grandes, Unicode y escala. Los tres cargadores se prueban dentro de Minecraft con servidor integrado y mundos nuevos de desarrollo: guardado y renombrado por red, chat, Tab, etiquetas, cuatro pestañas del editor y un clic real en el menú pequeño a 342 × 256 unidades. Se revisan capturas del menú de cada cargador.
+## Resultados de esta versiÃ³n
 
-Se adaptaron Identifier, FontDescription, permisos de gamemaster, NameAndId, GUI por extracción, eventos del ratón con modificadores, eventos de Forge y envío cliente de NeoForge. La nueva extracción requiere ARGB opaco para textos y composición explícita del panel dentro de su pose; se desactiva la sombra de los glifos de las etiquetas para evitar interferencias entre capas.
+| ComprobaciÃ³n | Fabric | Forge | NeoForge |
+|---|---|---|---|
+| CompilaciÃ³n y 82 comprobaciones de regresiÃ³n | Correcto | Correcto | Correcto |
+| InspecciÃ³n del JAR y sus metadatos | Correcto | Correcto | Correcto |
+| Servidor integrado, editor y guardado por red | Correcto | Pendiente | Pendiente |
+| Chat, captura y separaciÃ³n visual | Correcto | Pendiente | Pendiente |
 
-Los JAR se inspeccionan por metadatos, autor, objetivo Java 25, recursos formato 88, proveedor de plataforma y 144 iconos. Forge utiliza compatibilidad Mixin JAVA_21 debido al enum disponible en su Mixin integrado; el mod y Minecraft siguen requiriendo Java 25.
+Fabric pasÃ³ la autoprueba dentro de Minecraft: chat, Tab, etiquetas, cuatro pestaÃ±as, creaciÃ³n, guardado, renombrado y eliminaciÃ³n por red, y clic real en el editor a 342 Ã— 256 unidades. La altura del chat devuelve 14 pÃ­xeles y 21 con espaciado 0.5. La captura de tres etiquetas consecutivas confirma 42 pÃ­xeles fÃ­sicos por fila con escala Ã—3, equivalentes a 14 de interfaz y 3 de separaciÃ³n entre etiquetas de 11.
 
-No se hizo una sesión con dos clientes independientes en servidor dedicado ni una ejecución separada en un lanzador externo. No se modificaron los mundos originales.
+Forge y NeoForge compilan y superan las 82 comprobaciones de persistencia, recuperaciÃ³n, migraciÃ³n, revisiones, paquetes grandes, Unicode y escala. Sus clientes de desarrollo se bloquean en la biblioteca grÃ¡fica AMD atio6axx.dll con acceso invÃ¡lido durante el arranque de OpenGL. No se pudo completar su prueba dentro del juego ni confirmar visualmente el chat en 26.3. Se distribuyen como beta por esta limitaciÃ³n; necesitan validaciÃ³n en otro entorno grÃ¡fico. No se atribuye el fallo al mod ni se garantiza que sea exclusivamente del controlador.
 
-## Reproducción
+Los JAR se inspeccionan por autor, versiÃ³n, objetivo Java 25, proveedor de plataforma, 144 iconos y ausencia de clases de otros cargadores. El paquete conjunto cubre los formatos de recursos 97.1 y datos 121.0 de Minecraft 26.3. La autoprueba usa el identificador actualizado del botÃ³n izquierdo de 26.3.
+
+El mixin del chat conserva la correcciÃ³n de filas de 14 pÃ­xeles y cubre las constantes int y double que producen las herramientas de cada cargador. El resultado de una captura de Fabric no demuestra el dibujo de Forge o NeoForge.
+
+No se realizÃ³ una sesiÃ³n con dos clientes independientes en servidor dedicado ni una ejecuciÃ³n separada en un lanzador externo. No se modificaron los mundos originales.
+
+## ReproducciÃ³n
 
 Gradle 9.7.1 / Java 25. Compilar con `gradlew -Ploader=fabric build`, `gradlew -Ploader=forge build` o `gradlew -Ploader=neoforge build`; en Windows usar `.bat`.
 
 Fabric y NeoForge: `gradlew -Ploader=fabric :fabric:runSelftestSmall` o `gradlew -Ploader=neoforge :neoforge:runSelftestSmall`. Forge: `gradlew -Ploader=forge -PselftestSmall :forge:runClient`.
 
-Solo usar las carpetas de desarrollo para mundos de prueba: las autopruebas crean y modifican `selftest`. Los JAR finales están en `<cargador>/build/libs`.
+Las autopruebas crean y modifican mundos `selftest` exclusivamente en carpetas de desarrollo. Los JAR finales estÃ¡n en `<cargador>/build/libs`.
 
-La corrección del chat se comprueba dentro del juego: getLineHeight devuelve 14 con espaciado normal, coincidiendo con el dibujo. Se revisan capturas con mensajes consecutivos en los tres cargadores para verificar los 3 píxeles libres entre etiquetas.
-
-En Forge y NeoForge, la recompilación simplifica el cálculo de filas a una constante double; Fabric reutiliza una variable int. El mixin cubre ambas formas. Una prueba de altura de interacción por sí sola no confirma el dibujo: se verifican las capturas reales de cada cargador.
-
-Medición adicional de capturas: `python tools/check-chat-screenshot.py <captura>` verifica el paso de 42 píxeles físicos (14 de interfaz) entre las tres primeras etiquetas rojas consecutivas del escenario de prueba a escala ×3.
-
-Para 26.2 se comprueban también el ajuste personalizado de espaciado (21 píxeles con opción 0.5) y la creación y eliminación de un rango por red. Se mantienen las mediciones de captura de 42 píxeles por fila a escala ×3.
-
-El escenario 26.2 emite tres mensajes consecutivos del mismo rango antes de la captura, para medir el espaciado sin depender del orden de los rangos del mundo de prueba.
+InspecciÃ³n de los tres JAR: `python tools/validate-ports.py`. MediciÃ³n de la captura de Fabric: `python tools/check-chat-screenshot.py run-26.3-small/screenshots/selftest_small_chat.png`.
