@@ -1,4 +1,4 @@
-# Chaos Ranks 1.0.1
+# Chaos Ranks 1.1.0
 
 Mod para Fabric, NeoForge y Forge (Minecraft 1.21.1) que añade etiquetas de rango en pixel art al lado del nombre del jugador. Las etiquetas se ven en el chat, en el Tab y encima de la cabeza.
 
@@ -50,6 +50,14 @@ La etiqueta es un texto normal que usa la fuente `chaosranks:badge`, así que va
 Las capas no comparten píxeles para que no parpadeen en el mundo 3D. La etiqueta mide 11 px, con 1 px de aire encima y debajo del icono. El cliente sube 4 px el alto de las líneas del chat para que, contando la sombra, quede 1 px libre entre una línea y otra. El Tab usa `chaosranks:badge_compact`, de 9 px, porque sus filas son más bajas. El formato del chat usa el tipo de chat `chaosranks:rank` más un decorador del mensaje. Para que aparezca junto al nombre, cada rango crea un equipo del scoreboard (`chaosrank_*`) con la etiqueta como prefijo.
 
 Ojo: si otro mod o plugin mete a los mismos jugadores en otros equipos, chocarán.
+
+## Compatibilidad con NeoEssentials (y otros mods de chat)
+
+Algunos mods de chat cancelan el chat vanilla y reenvían cada mensaje como mensaje de sistema con su propia plantilla. Por ejemplo, NeoEssentials hace esto con `chat.enable-chat-formatting: true`, que es lo que trae por defecto. En esa plantilla el nombre va en texto plano. Chaos Ranks lo detecta: si un jugador acaba de escribir y su nombre aparece en ese mensaje, lo cambia por el nombre con rango (la etiqueta y el color del nombre). El separador y el color del mensaje de cada rango no se aplican, porque ahí manda la plantilla del otro mod. Si el nombre no aparece tal cual, por ejemplo con un apodo de `{displayname}`, el mensaje se queda como está.
+
+Hay dos formas de configurarlo:
+- **Formato completo de Chaos Ranks:** en `config/neoessentials/config.json`, poner `"enable-chat-formatting": false` dentro de `chat`. NeoEssentials deja de reescribir el chat y Chaos Ranks pinta todo. Mute, ignore y `/msg` siguen funcionando.
+- **Mantener la plantilla de NeoEssentials:** la etiqueta sale dentro de su formato. Si además tienes prefijos de LuckPerms, quita `{prefix}` de `chat-format` para que no salgan dos.
 
 ## Ports para Minecraft 1.21.1
 

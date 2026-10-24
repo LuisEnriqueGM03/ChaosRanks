@@ -1,3 +1,8 @@
+## Chaos Ranks 1.1.0
+
+- Compatibility with chat mods that cancel vanilla chat and resend it as a system message (e.g. NeoEssentials with `enable-chat-formatting`): the sender's name in that message now shows the rank badge and name color.
+- README: how to configure NeoEssentials, either Chaos Ranks' full chat format or NeoEssentials' template.
+
 ## Chaos Ranks 1.0.1 — Forge and NeoForge ports
 
 - Mod author: **Goddark83**.
