@@ -1,5 +1,9 @@
 # Validación de los ports de Chaos Ranks 1.0.1
 
+## Chaos Ranks 1.1.0
+
+Compatibilidad con mods de chat que reenvían el chat como mensaje de sistema (NeoEssentials). En los dos cargadores: compilación, regresiones, `tools/validate-ports.py` y autoprueba completa (`runSelftest`). La captura del chat muestra el mensaje simulado al estilo NeoEssentials con la etiqueta y el color del nombre. No se probó con NeoEssentials instalado.
+
 Minecraft 1.21.1, Java 21, NeoForge 21.1.257 y Forge 52.1.16.
 
 | Comprobación | NeoForge | Forge |
