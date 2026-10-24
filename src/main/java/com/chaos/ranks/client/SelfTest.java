@@ -102,6 +102,11 @@ public final class SelfTest {
 				ChaosRanks.LOGGER.info("[selftest] owner={} jefe={}", RankStore.get("owner") != null,
 						RankStore.get("jefe") != null);
 			}
+			case 105 -> server.execute(() -> {
+				// Como NeoEssentials: el chat reenviado como mensaje de sistema con el nombre en texto plano.
+				ServerPlayer p = player(server);
+				p.sendSystemMessage(Component.literal("§7<§f" + p.getGameProfile().getName() + "§7> §fcomo NeoEssentials"));
+			});
 			case 110 -> shot(mc, "chat");
 			case 115 -> server.execute(() -> RankServer.open(player(server), "jefe"));
    case 117 -> {

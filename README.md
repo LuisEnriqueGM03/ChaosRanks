@@ -51,6 +51,14 @@ Las capas no comparten píxeles para que no parpadeen en el mundo 3D. La etiquet
 
 Ojo: si otro mod o plugin mete a los mismos jugadores en otros equipos, chocarán.
 
+## Compatibilidad con NeoEssentials (y otros mods de chat)
+
+Algunos mods de chat cancelan el chat vanilla y reenvían cada mensaje como mensaje de sistema con su propia plantilla. Por ejemplo, NeoEssentials hace esto con `chat.enable-chat-formatting: true`, que es lo que trae por defecto. En esa plantilla el nombre va en texto plano. Chaos Ranks lo detecta: si un jugador acaba de escribir y su nombre aparece en ese mensaje, lo cambia por el nombre con rango (la etiqueta y el color del nombre). El separador y el color del mensaje de cada rango no se aplican, porque ahí manda la plantilla del otro mod. Si el nombre no aparece tal cual, por ejemplo con un apodo de `{displayname}`, el mensaje se queda como está.
+
+Hay dos formas de configurarlo:
+- **Formato completo de Chaos Ranks:** en `config/neoessentials/config.json`, poner `"enable-chat-formatting": false` dentro de `chat`. NeoEssentials deja de reescribir el chat y Chaos Ranks pinta todo. Mute, ignore y `/msg` siguen funcionando.
+- **Mantener la plantilla de NeoEssentials:** la etiqueta sale dentro de su formato. Si además tienes prefijos de LuckPerms, quita `{prefix}` de `chat-format` para que no salgan dos.
+
 ## Desarrollo
 
 - `python tools/gen_font.py` regenera las texturas de la fuente y `badge_meta.json` a partir del ASCII art del script. Ahí se añaden letras o iconos.
